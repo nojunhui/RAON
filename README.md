@@ -7,7 +7,7 @@
 <em>캡스톤디자인2 프로젝트 초기 주제</em><br>
 
 <strong>초기 기획 주제:</strong> 시각장애인을 위한 <u>음성 기반 고속·시외버스 예매 앱</u><br>
-초기 UI 설계 [<a href="https://www.figma.com/design/4qncHMU2Q73nGuPkiSWFev/RAON?node-id=0-1&t=3nhkOHYCXpbmF6k0-1" target="_blank">Figma 보기</a>]
+초기 주제 UI 설계 [<a href="https://www.figma.com/design/4qncHMU2Q73nGuPkiSWFev/RAON?node-id=0-1&t=3nhkOHYCXpbmF6k0-1" target="_blank">Figma 보기</a>]
 
 </p>
 
@@ -50,3 +50,10 @@
   - 내가 관심 누른 교재 목록 보기  
   - 내가 참여한 채팅 목록 보기  
   - 내 구매/판매 이력 보기
+ 
+---
+
+## 사용자 업무 흐름도
+
+[Figjam 링크]
+(https://www.figma.com/board/sVFhajt3QDC8ZMNQ6BJh7S/GU%EA%B5%90%EC%9E%AC?node-id=0-1&t=huYgt7rNmFk90xFM-1)
