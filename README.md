@@ -1,10 +1,10 @@
 # RAON
+
+조원: 노준희, 조문정, 이예은, 이승호, 임형석<br><br>
+---
 <p style="font-size: 0.9em; color: gray; font-style: italic;">
 
-<strong>RAON</strong><br><br>
-
 <em>캡스톤디자인2 프로젝트 초기 주제</em><br>
-조원: 노준희, 조문정, 이예은, 이승호, 임형석<br><br>
 
 <strong>초기 기획 주제:</strong> 시각장애인을 위한 <u>음성 기반 고속·시외버스 예매 앱</u><br>
 초기 UI 설계 [<a href="https://www.figma.com/design/4qncHMU2Q73nGuPkiSWFev/RAON?node-id=0-1&t=3nhkOHYCXpbmF6k0-1" target="_blank">Figma 보기</a>]
