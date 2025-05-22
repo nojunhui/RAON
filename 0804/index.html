@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>GU 교재 마켓</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="filters">
+        <div class="category-toggle">
+          <button id="majorBtn" class="active" onclick="selectCategory('major')">전공</button>
+          <button id="liberalBtn" onclick="selectCategory('liberal')">교양</button>
+        </div>
+
+        <!-- 필터 영역 -->
+        <select id="grade">
+          <option value="">학년</option>
+          <option value="1">1학년</option>
+          <option value="2">2학년</option>
+          <option value="3">3학년</option>
+          <option value="4">4학년</option>
+          <option value="5">5학년</option>
+        </select>
+
+        <select id="college">
+          <option value="">단과대 선택</option>
+          <option value="보건복지대학">보건복지대학</option>
+          <option value="문화산업대학">문화산업대학</option>
+          <option value="인문사회과학대학">인문사회과학대학</option>
+          <option value="공과대학">공과대학</option>
+        </select>
+
+        <select id="department">
+          <option value="">학과 선택</option>
+        </select>
+      </div>
+
+      <div class="auth-buttons">
+        <button>회원가입</button>
+        <button>로그인</button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" placeholder="검색어를 입력해 주세요." />
+      <button>검색</button>
+    </div>
+
+    <section class="new-books">
+      <h3>🆕 오늘 새로 올라온 책</h3>
+      <div class="book-slider">
+        <div class="book-card">
+          <img src="image/국어교육론.jpg" alt="책1" />
+          <p>국어교육론</p>
+          <p class="price">판매가 <strong>7,000원</strong></p>
+          <span class="heart">♡</span>
+        </div>
+        <!-- 4개 복제 -->
+        <div class="book-card">
+          <img src="image/쉽게 배우는.jpg" alt="책2" />
+          <p>쉽게 배우는 운영체제</p>
+          <p class="price">판매가 <strong>5,000원</strong></p>
+          <span class="heart">♡</span>
+        </div>
+        <div class="book-card">
+          <img src="image/데이터.jpg" alt="책3" />
+          <p>쉽게 배우는 데이터 통신과 컴퓨터 네트워크</p>
+          <p class="price">판매가 <strong>5,000원</strong></p>
+          <span class="heart">♡</span>
+        </div>
+        <div class="book-card">
+          <img src="image/정보.jpg" alt="책4" />
+          <p>2025 시나공 정보처리기사 필기 기본서 </p>
+          <p class="price">판매가 <strong>5,000원</strong></p>
+          <span class="heart">♡</span>
+          <i id="heart-icon" class="fa-regular fa-heart" style="font-size:24px; cursor:pointer;"></i>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <div class="ranking">
+        <h4>📚 지금 많이 거래되는 전공책 TOP</h4>
+        <ul>
+          <li><strong>TOP 1</strong> 자료구조와 알고리즘 <span>컴퓨터공학과</span></li>
+          <li><strong>TOP 2</strong> 파이썬과 머신러닝 <span>컴퓨터공학과</span></li>
+          <li><strong>TOP 3</strong> 인체생물학 <span>간호학과</span></li>
+          <li><strong>TOP 4</strong></li>
+          <li><strong>TOP 5</strong></li>
+        </ul>
+      </div>
+      <div class="tips">
+        <h4>💡 중고 거래 판매 TIP!</h4>
+        <ol>
+          <li>사진은 3장 이상! (표지 · 옆면 · 사용감 보여주기)</li>
+          <li>설명에 학기 · 상태 · 거래방식 적기</li>
+          <li>적정 가격은 신간가의 50~70%</li>
+          <li>거래는 학교 인증 사용자와!</li>
+        </ol>
+      </div>
+      <div class="curriculum">
+  <h4>교과과정 바로 가기</h4>
+  <a href="https://haksa.gwangju.ac.kr/~op/sugang/gyogwa/newgyogwa20251.php3" target="_blank" rel="noopener noreferrer">
+    <img src="image/심볼.png" alt="Gwangju University" style="display:block; margin:0 auto; width:100px; height:auto;" />
+  </a>
+</div>
+    </section>
+
+    <footer>© 2025 GU 교재마켓 [RAON]</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

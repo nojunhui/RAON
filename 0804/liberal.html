@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>GU 교재 마켓 - 교양</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="filters">
+        <div class="category-toggle">
+          <a href="index.html"><button>전공</button></a>
+          <a href="liberal.html"><button class="active">교양</button></a>
+        </div>
+        <!-- 학년 및 단과대 셀렉트는 교양 페이지에는 제외하거나 필요시 맞게 수정 -->
+      </div>
+
+      <div class="auth-buttons">
+        <button>회원가입</button>
+        <button>로그인</button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" placeholder="검색어를 입력해 주세요.">
+      <button>검색</button>
+    </div>
+
+    <section class="new-books">
+      <h3>🆕 오늘 새로 올라온 교양책</h3>
+      <div class="book-slider">
+        <div class="book-card">
+          <img src="book4.png" alt="책4">
+          <p>인문학 명강의</p>
+          <p class="price">판매가 <strong>6,000원</strong></p>
+          <span class="heart">♡</span>
+        </div>
+        <div class="book-card">
+          <img src="book5.png" alt="책5">
+          <p>글쓰기의 기술</p>
+          <p class="price">판매가 <strong>4,000원</strong></p>
+          <span class="heart">♡</span>
+        </div>
+        <!-- 교양책 추가 가능 -->
+      </div>
+    </section>
+
+    <section class="info-section">
+      <div class="ranking">
+        <h4>📚 인기 교양책 TOP</h4>
+        <ul>
+          <li><strong>TOP 1</strong> 철학의 이해 <span>교양</span></li>
+          <li><strong>TOP 2</strong> 글쓰기의 기술 <span>교양</span></li>
+          <li><strong>TOP 3</strong> 세계사 산책 <span>교양</span></li>
+        </ul>
+      </div>
+      <div class="tips">
+        <h4>💡 중고 거래 판매 TIP!</h4>
+        <ol>
+          <li>사진은 3장 이상! (표지 · 옆면 · 사용감 보여주기)</li>
+          <li>설명에 학기 · 상태 · 거래방식 적기</li>
+          <li>적정 가격은 신간가의 50~70%</li>
+          <li>거래는 학교 인증 사용자와!</li>
+        </ol>
+      </div>
+      <div class="curriculum">
+        <h4>교양 과목 바로 가기</h4>
+        <img src="gwangju.png" alt="Gwangju University">
+      </div>
+    </section>
+
+    <footer>
+      © 2025 GU 교재마켓 [RAON]
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

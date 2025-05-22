@@ -1,0 +1,203 @@
+body {
+  margin: 0;
+  font-family: 'SUIT', sans-serif;
+  background-color: #fff1cc;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  background-color: #fff8e7;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+
+.title {
+  white-space: nowrap; /* 줄 바꿈 금지 */
+  background: lightblue;
+}
+
+.subtitle {
+  white-space: nowrap; /* 줄 바꿈 금지 */
+  background: lightgreen;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f7d794;
+  padding: 10px 20px;
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.category-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.category-toggle button {
+  padding: 6px 14px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 10px;
+  background-color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  color: #444;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.category-toggle button.active {
+  background-color: #eabf95;
+  color: white;
+}
+
+
+.category-toggle button.active {
+  background-color: #eabf95;
+  color: white;
+}
+
+.category-toggle button.active {
+  background-color: #eabf95;
+  color: white;
+}
+
+
+.filters select {
+  margin-right: 10px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #f5cd79;
+  background-color: #fff8e7;
+}
+
+.auth-buttons button {
+  margin-left: 10px;
+  padding: 6px 12px;
+  border: none;
+  background-color: #fff;
+  border-radius: 6px;
+}
+
+.search-box {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.search-box input {
+  width: 60%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search-box button {
+  padding: 8px 12px;
+  margin-left: 8px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.new-books {
+  margin-top: 30px;
+}
+
+.book-slider {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.book-card {
+  min-width: 200px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.book-card img {
+  width: 100%;
+  height: auto;
+}
+
+.book-card .price {
+  color: #333;
+  font-size: 15px;
+  margin: 8px 0;
+}
+
+.book-card .heart {
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+}
+
+.heart-icon.red {
+  color: red;
+}
+.info-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ranking, .tips, .curriculum {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 300px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.ranking ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ranking li {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.ranking li span {
+  float: right;
+  color: #888;
+  font-size: 14px;
+}
+
+.tips ol {
+  padding-left: 18px;
+  font-size: 14px;
+  color: #444;
+}
+
+.curriculum {
+  text-align: center;  /* 내부 텍스트와 이미지 모두 가운데 정렬 */
+}
+
+.curriculum img {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 180px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: #888;
+  margin-top: 40px;
+}
