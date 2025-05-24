@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RAON 마이페이지 - 등록한 글 목록 </title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- 헤더 -->
+    <header class="header" role="banner">
+      <h1>RAON</h1>
+      <input type="text" placeholder="검색어를 입력해 주세요." aria-label="검색어 입력" />
+      <button type="button" aria-label="검색">검색</button>
+      <nav class="header-buttons" role="navigation" aria-label="헤더 주요 메뉴">
+        <button type="button">교재 판매</button>
+        <button type="button">마이페이지</button>
+        <button type="button">로그아웃</button>
+      </nav>
+    </header>
+
+    <!-- 메인 영역 -->
+    <main class="main">
+      <!-- 사이드바 -->
+      <aside class="sidebar" role="complementary" aria-label="마이페이지 메뉴">
+        <ul>
+          <li tabindex="0">회원정보 수정</li>
+          <li tabindex="0">등록한 글 목록</li>
+          <li tabindex="0">관심 책 목록</li>
+          <li tabindex="0">구매 / 판매 기록</li>
+          <li tabindex="0">채팅</li>
+        </ul>
+      </aside>
+
+      <!-- 콘텐츠 -->
+      <section class="content" role="main" tabindex="0">
+        <h2> 등록한 글 목록 </h2>
+        <ul class="post-list">
+          <li><a href="#">1. [ 쉽게 배우는 데이터 통신과 컴퓨터 네트워크 ]      [ 한빛미디어 ]      [ 2025.x.x ]</a></li>
+          <li><a href="#">2. [ 리눅스시스템 원리와 실제 ]      [ 생능출판사 ] [ 2025.x.x ]</a></li>
+          <li><a href="#">3. [ 데이터베이스 배움터 ]      [ 생능출판사 ]      [ 2025.x.x ]</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
