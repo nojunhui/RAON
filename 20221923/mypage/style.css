@@ -119,7 +119,7 @@
     }
 
     .highlight-number {
-  color: #1E90FF;        /* 파란색 */
+  color: #1E90FF; 
   text-decoration: underline;
   font-weight: bold;
 }
