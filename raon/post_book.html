@@ -1,178 +1,118 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>교재 등록</title>
-  <style>
-    .dropdown-multilevel { position: relative; display: inline-block; }
-    .dropdown-btn {
-      padding: 8px 16px;
-      border: 1px solid #bbb; background: #fff; cursor: pointer;
-      min-width: 140px;
-    }
-    .dropdown-content, .sub-menu, .sub-sub-menu {
-      display: none;
-      position: absolute; background: #fff; border: 1px solid #ccc; min-width: 160px; z-index: 1000;
-    }
-    .dropdown-content { left: 0; top: 100%; }
-    .sub-menu { left: 100%; top: 0; }
-    .sub-sub-menu { left: 100%; top: 0; }
-    .dropdown-multilevel:hover .dropdown-content { display: block; }
-    .dropdown-content > .menu-item:hover > .sub-menu { display: block; }
-    .sub-menu > .sub-item:hover > .sub-sub-menu { display: block; }
-    .menu-item, .sub-item, .sub-sub-item {
-      padding: 8px 16px; cursor: pointer; white-space: nowrap;
-    }
-    .menu-item:hover, .sub-item:hover, .sub-sub-item:hover { background: #f0f0f0; }
-    #gradeSection { margin-top: 8px; }
-    #preview img { height:80px; margin:4px; border:1px solid #ddd;}
-    #preview .fname { font-size:0.9em; color:#555;}
-  </style>
+    <meta charset="UTF-8">
+    <title>교재 등록 | RAON</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .post-box { max-width:540px; margin:40px auto; background:#fff; border-radius:15px; box-shadow:0 1px 8px rgba(0,0,0,0.08); padding:34px 35px 34px 35px;}
+        .post-title {font-size:1.29em;font-weight:bold;margin-bottom:25px;letter-spacing:2px;}
+        .post-btn-row {display:flex;gap:12px;margin-bottom:23px;}
+        .post-type-btn {
+            border-radius:8px; border:1.5px solid #ffc093; background:#fff;
+            color:#c87d2e; font-weight:bold; font-size:1.07em;
+            width:110px; height:40px; cursor:pointer; transition:.13s;
+        }
+        .post-type-btn.active { background:#ffc093; color:#fff;}
+        .post-filter { display:flex; gap:10px; margin-bottom:16px;}
+        .input-row {margin-bottom:16px;}
+        .input-row label {display:block;font-size:1em;margin-bottom:7px;font-weight:bold;color:#333;}
+        .input-row input, .input-row textarea {width:100%;border-radius:7px;border:1px solid #ffc093;padding:8px;font-size:1.05em;}
+        .input-row textarea {resize:vertical;min-height:80px;}
+        .submit-btn {width:100%;margin-top:15px;height:44px;font-size:1.1em;font-weight:bold;background:#ffc093;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+    </style>
 </head>
 <body>
-  <h2>교재 등록</h2>
-  <form id="bookForm" action="post_book.php" method="post" enctype="multipart/form-data">
-    <!-- 드롭다운: 카테고리, 단과대, 학과, 교양 선택 -->
-    <div class="dropdown-multilevel" id="categoryDropdown">
-      <div class="dropdown-btn" id="categoryBtn">카테고리 선택</div>
-      <div class="dropdown-content" id="dropdownMenu">
-        <div class="menu-item" data-cat="전공">전공
-          <div class="sub-menu">
-            <div class="sub-item" data-college="공과대학">공과대학
-              <div class="sub-sub-menu">
-                <div class="sub-sub-item" data-major="컴퓨터공학과">컴퓨터공학과</div>
-                <div class="sub-sub-item" data-major="건축학과">건축학과</div>
-              </div>
-            </div>
-            <div class="sub-item" data-college="보건복지대학">보건복지대학
-              <div class="sub-sub-menu">
-                <div class="sub-sub-item" data-major="간호학과">간호학과</div>
-                <div class="sub-sub-item" data-major="언어치료학과">언어치료학과</div>
-              </div>
-            </div>
-          </div>
+<div class="topnav">
+    <div class="logo" onclick="location.href='index.php'">RAON</div>
+    <div style="flex:1;"></div>
+    <a href="mypage.php"><button>마이페이지</button></a>
+    <a href="logout.php"><button>로그아웃</button></a>
+</div>
+<div class="post-box">
+    <div class="post-title">교재 등록</div>
+    <form action="post_book.php" method="post" enctype="multipart/form-data" id="regForm">
+        <div class="post-btn-row">
+            <button type="button" id="btnMajor" class="post-type-btn">전공</button>
+            <button type="button" id="btnLiberal" class="post-type-btn">교양</button>
         </div>
-        <div class="menu-item" data-cat="교양">교양
-          <div class="sub-menu">
-            <div class="sub-item" data-subject="호심교양">호심교양</div>
-            <div class="sub-item" data-subject="균형교양">균형교양</div>
-          </div>
+        <input type="hidden" name="category" id="categoryInput">
+        <div id="major-filter" class="post-filter" style="display:none;">
+            <select id="gradeSelect" name="grade" class="filter-sel">
+                <option value="">학년</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+                <option value="4">4학년</option>
+                <option value="5">5학년</option>
+            </select>
+            <div id="majorSelectBtn" class="filter-sel" style="width:160px;position:relative;user-select:none;cursor:pointer;">학과</div>
+            <input type="hidden" id="selectedMajor" name="major">
+            <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:320px;top:32px;">
+                <div style="display:flex;">
+                  <div id="collegeList" style="min-width:110px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
+                  <div id="deptList" style="min-width:150px;padding:0 8px;"></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <input type="hidden" name="category" id="categoryInput">
-    <input type="hidden" name="college" id="collegeInput">
-    <input type="hidden" name="major" id="majorInput">
-    <input type="hidden" name="subject" id="subjectInput">
-    <!-- 학년 선택(전공만) -->
-    <div id="gradeSection" style="display:none;">
-      학년:
-      <select name="grade" id="gradeSelect">
-        <option value="">학년 선택</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-      </select>
-    </div>
-    <br>
-    제목: <input type="text" name="title" required><br>
-    저자: <input type="text" name="author"><br>
-    출판사: <input type="text" name="publisher"><br>
-    출판일: <input type="date" name="publish_date"><br>
-    원가: <input type="number" name="original_price"><br>
-    판매가: <input type="number" name="selling_price" required><br>
-    설명: <textarea name="description"></textarea><br>
-    <b>책 사진 (여러 장 선택 & 여러 번 추가 가능):</b>
-    <input type="file" id="imageInput" multiple accept="image/*"><br>
-    <div id="preview"></div>
-    <input type="submit" value="등록">
-  </form>
-
-  <script>
-  // 드롭다운: 전공-학과 선택
-  document.querySelectorAll('.sub-sub-item').forEach(item => {
-    item.onclick = function(e) {
-      e.stopPropagation();
-      document.getElementById('categoryInput').value = '전공';
-      document.getElementById('collegeInput').value = this.parentNode.parentNode.dataset.college;
-      document.getElementById('majorInput').value = this.dataset.major;
-      document.getElementById('subjectInput').value = '';
-      document.getElementById('categoryBtn').textContent = `전공 > ${this.parentNode.parentNode.dataset.college} > ${this.dataset.major}`;
-      document.getElementById('gradeSection').style.display = 'block';
-    }
-  });
-  // 교양-분야 선택
-  document.querySelectorAll('.sub-item[data-subject]').forEach(item => {
-    item.onclick = function(e) {
-      e.stopPropagation();
-      document.getElementById('categoryInput').value = '교양';
-      document.getElementById('collegeInput').value = '';
-      document.getElementById('majorInput').value = '';
-      document.getElementById('subjectInput').value = this.dataset.subject;
-      document.getElementById('categoryBtn').textContent = `교양 > ${this.dataset.subject}`;
-      document.getElementById('gradeSection').style.display = 'none';
-      document.getElementById('gradeSelect').value = '';
-    }
-  });
-
-  // =========================
-  // 누적 파일 첨부 및 미리보기
-  let allFiles = [];
-
-  document.getElementById('imageInput').addEventListener('change', function(event) {
-    const files = Array.from(event.target.files);
-    allFiles = allFiles.concat(files);
-
-    // 중복 방지(같은 이름/사이즈/타입이면 마지막만 유지)
-    allFiles = allFiles.filter((file, idx, arr) =>
-      arr.findIndex(f => f.name===file.name && f.size===file.size && f.type===file.type) === idx);
-
-    renderPreview();
-    // input 초기화해서 또 선택 가능하게
-    event.target.value = '';
-  });
-
-  function renderPreview() {
-    const preview = document.getElementById('preview');
-    preview.innerHTML = '';
-    allFiles.forEach(file => {
-      // 파일명 표시
-      const fname = document.createElement('div');
-      fname.textContent = file.name;
-      fname.className = 'fname';
-      preview.appendChild(fname);
-      // 이미지 미리보기
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          preview.appendChild(img);
-        }
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-
-  // 실제 form submit 시 누적파일을 FormData에 담아 전송
-  document.getElementById('bookForm').onsubmit = function(e) {
-    if (allFiles.length === 0) {
-      alert("책 사진을 한 장 이상 선택하세요!");
-      e.preventDefault();
-      return false;
-    }
-    const form = this;
-    const formData = new FormData(form);
-    // 기존 file input은 사용 안함. allFiles로 재구성
-    allFiles.forEach(file => formData.append('images[]', file));
-    // fetch로 직접 전송(동기전송 방지)
-    fetch(form.action, {method:'POST', body:formData})
-      .then(res => res.text())
-      .then(html => document.body.innerHTML = html);
-    e.preventDefault();
-    return false;
-  };
-  </script>
+        <div id="liberal-filter" class="post-filter" style="display:none;">
+            <select id="liberalType" name="subject" class="filter-sel">
+                <option value="">교양 종류</option>
+                <option value="호심교양">호심교양</option>
+                <option value="균형교양">균형교양</option>
+            </select>
+        </div>
+        <div class="input-row">
+            <label>책 제목</label>
+            <input type="text" name="title" required>
+        </div>
+        <div class="input-row">
+            <label>저자</label>
+            <input type="text" name="author" required>
+        </div>
+        <div class="input-row">
+            <label>출판사</label>
+            <input type="text" name="publisher" required>
+        </div>
+        <div class="input-row">
+            <label>판매 가격</label>
+            <input type="number" name="selling_price" min="0" required>
+        </div>
+        <div class="input-row">
+            <label>상세 설명</label>
+            <textarea name="description"></textarea>
+        </div>
+        <div class="input-row">
+            <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
+            <input type="file" name="images[]" accept="image/*" multiple required>
+        </div>
+        <button type="submit" class="submit-btn">등록하기</button>
+    </form>
+</div>
+<script src="script.js"></script>
+<script>
+// 전공/교양 버튼 동작
+const btnMajor = document.getElementById('btnMajor');
+const btnLiberal = document.getElementById('btnLiberal');
+const majorFilter = document.getElementById('major-filter');
+const liberalFilter = document.getElementById('liberal-filter');
+const categoryInput = document.getElementById('categoryInput');
+btnMajor.onclick = function() {
+    btnMajor.classList.add('active');
+    btnLiberal.classList.remove('active');
+    majorFilter.style.display = '';
+    liberalFilter.style.display = 'none';
+    categoryInput.value = '전공';
+};
+btnLiberal.onclick = function() {
+    btnLiberal.classList.add('active');
+    btnMajor.classList.remove('active');
+    liberalFilter.style.display = '';
+    majorFilter.style.display = 'none';
+    categoryInput.value = '교양';
+};
+// 최초 디폴트 (전공)
+btnMajor.click();
+</script>
 </body>
 </html>

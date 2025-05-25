@@ -1,0 +1,191 @@
+/* ... 기존 style.css 위에 추가 ... */
+
+/* 수정/삭제 버튼 */
+.book-edit-btn, .book-delete-btn {
+    background: #fff;
+    color: #e36c09;
+    border: 1.5px solid #ffc093;
+    border-radius: 7px;
+    font-size: 1.01em;
+    font-weight: bold;
+    padding: 7px 20px;
+    margin-right: 7px;
+    cursor: pointer;
+    transition: background 0.13s;
+}
+.book-delete-btn { color: #e03636; border-color: #e03636;}
+.book-edit-btn:hover { background: #ffe4cc;}
+.book-delete-btn:hover { background: #ffe4cc; color: #fff; border-color:#e03636;}
+
+/* 채팅하기 버튼 */
+.chat-btn {
+    background: #FFECC2;
+    color: #562502;
+    font-weight: bold;
+    border-radius: 9px;
+    border: 1.5px solid #FFC093;
+    font-size: 1.03em;
+    padding: 7px 23px;
+    cursor: pointer;
+    transition: background .15s;
+}
+.chat-btn:hover {
+    background: #FFDDA6;
+    color: #562502;
+}
+
+body {
+  background: #FFECC2;
+  font-family: 'SUIT', sans-serif;
+  margin: 0;
+}
+
+.topnav {
+  display: flex;
+  align-items: center;
+  background: #FFECC2;
+  padding: 16px 24px 8px 24px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 2.2em;
+  color: #222;
+  margin-right: 36px;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.category-bar {
+  margin-right: 14px;
+  display: flex;
+  gap: 6px;
+}
+
+.category-btn {
+  width: 90px; height: 30px;
+  background: #fff;
+  color: #c87d2e;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.06em;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background .15s;
+}
+.category-btn.active, .category-btn.selected {
+  background: #FFC093 !important;
+  color: #fff;
+}
+
+.filter-group { display: flex; gap:8px; margin-right: 14px;}
+.filter-sel { height: 30px; min-width: 90px; border-radius: 6px; border: 1px solid #ffd7b3; background: #fff; font-size:1em;}
+/* 2단 학과 드롭다운 */
+#majorDropdown {
+  min-width: 350px; top:36px;
+  border: 1px solid #ffd7b3;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.14);
+  background: #fff;
+  border-radius: 7px;
+  padding: 10px 0;
+}
+#collegeList {
+  min-width:120px; border-right:1px solid #f0c6a7; padding:0 8px;
+}
+#deptList {
+  min-width:180px; padding:0 8px;
+}
+.college-item, .dept-item {
+  padding: 6px 11px;
+  font-size: 1.01em;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  transition: background 0.13s;
+}
+.college-item:hover, .dept-item:hover { background: #ffe4cc;}
+/* '전체' 선택 강조 */
+.college-item:first-child { font-weight:bold; color:#c87d2e; }
+
+.search-bar {
+  display: flex; align-items: center; flex: 1;
+  margin-right: 15px; margin-left: 10px;
+}
+.search-input { width: 600px; height: 38px; border-radius: 9px; border: 1px solid #ffc093; padding:0 18px; font-size: 1em; margin-right: 8px;}
+.search-btn { width: 70px; height:38px; border-radius:10px; border:none; background:#FFC093; color:#fff; font-weight:bold; font-size:1.06em; cursor:pointer;}
+
+.auth-btns { display: flex; gap: 7px;}
+.auth-btns button { width:110px; height:40px; border-radius: 9px; background: #fff; border: 1px solid #ffc093; color:#c87d2e; font-weight: bold; font-size:1.05em; cursor:pointer;}
+.username { font-weight: bold; color: #222; margin-right: 13px; font-size:1.04em;}
+
+.main-content { max-width: 1240px; margin: 32px auto 0 auto; }
+.new-books-box { background: #fff; padding: 22px; border-radius: 13px; margin-bottom: 18px;}
+.new-books-title {font-size: 1.19em; font-weight:bold; margin-bottom:16px;}
+.book-list-row { display: flex; gap: 18px;}
+.book-card { background: #fff; border-radius:10px; box-shadow:0 1px 6px rgba(0,0,0,0.06); width:190px; padding:10px 8px;}
+.book-thumb { width:100%; height:110px; object-fit:cover; border-radius:7px;}
+.book-title { font-weight: bold; font-size: 1em; margin:7px 0; display:flex; align-items:center; gap:10px;}
+.book-meta { color:#555; font-size:0.97em; margin-bottom:6px;}
+.book-price { color: #e36c09; font-weight:bold; margin-left:10px; }
+.book-footer { display:flex; align-items: center; gap: 8px; }
+.heart-btn { cursor:pointer; font-size: 19px; border:none; background:none; outline:none;}
+.heart-btn .fa-heart { color:#ccc; transition:color .2s;}
+.heart-btn.liked .fa-heart { color:#e03636; }
+.interest-count {font-size:0.96em; color:#444; margin-left:3px;}
+
+/* 판매중/판매완료 상태박스 */
+.book-status {
+  display:inline-block;
+  padding: 2px 13px;
+  margin-left:10px;
+  font-size: 0.97em;
+  font-weight: bold;
+  border-radius: 15px;
+  border: 1.5px solid #FFC093;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: 3px;
+}
+.book-status.sale {
+  background: #fff;
+  color: #e36c09;
+  border: 1.5px solid #FFC093;
+}
+.book-status.soldout {
+  background: #FFC093;
+  color: #fff;
+  border: 1.5px solid #FFC093;
+}
+
+.bottom-row { display:flex; gap:28px; margin-top:30px;}
+.rank-box, .tip-box { background: #fff; border-radius: 14px; padding: 16px 19px; flex:1;}
+.rank-box ol { list-style: none; padding-left:0;}
+.rank-box li { font-size:1em; margin-bottom:9px; display: flex; align-items:center; }
+.rank-box .top-label { font-weight:bold; margin-right:10px;}
+.rank-box .rank-none {color:#bbb;}
+.go-curriculum { background: #fff; border-radius: 14px; padding: 16px; width: 150px; text-align: center;}
+
+footer {text-align: center; margin: 40px 0 16px 0; color: #bfa672; font-size: 1.07em;}
+
+/* 검색 결과 */
+.result-wrapper { margin-top:40px; }
+.result-container { background: #fff; padding: 24px; border-radius: 12px; }
+.result-title { font-weight: bold; font-size: 1.14em; margin-bottom: 10px; color:#3d3d3d; }
+.search-results-list { background:#F5F5F5; border-radius:12px; padding:24px 18px 18px 18px; margin-bottom:16px;}
+.result-item { display:flex; align-items:flex-start; gap:19px; border-bottom:1px solid #eee; padding:18px 0 15px 0;}
+.result-item:last-child { border-bottom:none;}
+.result-rank { font-weight: bold; font-size:1.4em; width:34px; color:#ae8537;}
+.result-thumb { width:65px; height:80px; object-fit:cover; border-radius:7px;}
+.result-info { flex:1; }
+.result-title-txt { font-size:1.13em; font-weight: bold; color:#222; display: flex; align-items:center; gap:10px;}
+.result-meta { color:#6a6a6a; font-size:0.97em; margin:4px 0 3px 0;}
+.result-major { font-size: 0.97em; color: #257; margin-top:4px;}
+.result-price { color: #e03636; font-weight: bold; font-size: 1.18em; margin-left:11px;}
+.result-interest { display:flex; align-items:center; gap:6px;}
+.result-heart-btn { border:none; background:none; cursor:pointer; font-size: 21px; }
+.result-heart-btn .fa-heart {color:#bbb;}
+.result-heart-btn.liked .fa-heart {color:#e03636;}
+.result-pagenation {text-align: center;}
+.result-page-btn { border:none; background:#eee; border-radius:7px; font-size:1.11em; width:34px; height:34px; margin:3px; cursor:pointer;}
+.result-page-btn.active { background:#ffc093; color:#fff; font-weight:bold;}

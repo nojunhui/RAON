@@ -1,212 +1,155 @@
+
 <?php
 session_start();
-if (!isset($_SESSION['student_id'])) {
-  header("Location: login.html"); exit;
-}
+$isLogin = isset($_SESSION['student_id']);
+$name = $isLogin ? $_SESSION['name'] : null;
 ?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>교재 거래 메인</title>
-  <style>
-    .dropdown-multilevel { position: relative; display: inline-block; }
-    .dropdown-btn {
-      padding: 8px 16px;
-      border: 1px solid #bbb; background: #fff; cursor: pointer;
-      min-width: 140px;
-    }
-    .dropdown-content, .sub-menu, .sub-sub-menu {
-      display: none;
-      position: absolute; background: #fff; border: 1px solid #ccc; min-width: 160px; z-index: 1000;
-    }
-    .dropdown-content { left: 0; top: 100%; }
-    .sub-menu { left: 100%; top: 0; }
-    .sub-sub-menu { left: 100%; top: 0; }
-    .dropdown-multilevel:hover .dropdown-content { display: block; }
-    .dropdown-content > .menu-item:hover > .sub-menu { display: block; }
-    .sub-menu > .sub-item:hover > .sub-sub-menu { display: block; }
-    .menu-item, .sub-item, .sub-sub-item {
-      padding: 8px 16px; cursor: pointer; white-space: nowrap;
-    }
-    .menu-item:hover, .sub-item:hover, .sub-sub-item:hover { background: #f0f0f0; }
-    .book-row {
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #ddd; padding: 10px 0;
-    }
-    .book-info {
-      display: flex; align-items: center;
-    }
-    .book-img {
-      height: 80px; width: 80px; object-fit: cover;
-      margin-right: 10px; border: 1px solid #eee; background: #fafafa;
-    }
-    .book-title {
-      font-weight: bold; font-size: 1.15em;
-      color: #272957;
-      text-decoration: none;
-    }
-    .interest-btn {
-      background: #f7e8da; border: 1px solid #e36c09; color: #e36c09;
-      font-weight: bold; padding: 4px 10px; border-radius: 16px; cursor: pointer;
-      margin-right: 5px;
-    }
-    .seller-name { font-size: 0.97em; color: #444; margin-right: 15px;}
-    .price-tag { font-weight: bold; color: #e36c09; font-size: 1.1em;}
-    #gradeSection { display:none; margin: 10px 0 0 0; }
-    #gradeSelect { padding:3px 6px; }
-  </style>
+  <title>RAON 교재 거래</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-  <h2>안녕하세요, <?=$_SESSION['name']?>님</h2>
-  <a href="post_book.html">교재 등록</a> | 
-  <a href="mypage.php">마이페이지</a> | 
-  <a href="logout.php">로그아웃</a>
-  <form action="index.php" method="get" id="searchForm" style="margin-top:20px;">
-    <div class="dropdown-multilevel" id="categoryDropdown">
-      <div class="dropdown-btn" id="categoryBtn">카테고리 선택</div>
-      <div class="dropdown-content" id="dropdownMenu">
-        <div class="menu-item" data-cat="전공">전공
-          <div class="sub-menu">
-            <div class="sub-item" data-college="공과대학">공과대학
-              <div class="sub-sub-menu">
-                <div class="sub-sub-item" data-major="컴퓨터공학과">컴퓨터공학과</div>
-                <div class="sub-sub-item" data-major="건축학과">건축학과</div>
-              </div>
-            </div>
-            <div class="sub-item" data-college="보건복지대학">보건복지대학
-              <div class="sub-sub-menu">
-                <div class="sub-sub-item" data-major="간호학과">간호학과</div>
-                <div class="sub-sub-item" data-major="언어치료학과">언어치료학과</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="menu-item" data-cat="교양">교양
-          <div class="sub-menu">
-            <div class="sub-item" data-subject="호심교양">호심교양</div>
-            <div class="sub-item" data-subject="균형교양">균형교양</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <input type="hidden" name="category" id="categoryInput">
-    <input type="hidden" name="college" id="collegeInput">
-    <input type="hidden" name="major" id="majorInput">
-    <input type="hidden" name="subject" id="subjectInput">
-    <input type="hidden" name="grade" id="gradeInput">
-    <input type="text" name="search" placeholder="책 제목, 저자" value="<?=htmlspecialchars($_GET['search']??'')?>">
-    <span id="gradeSection">
-      <select name="grade" id="gradeSelect">
-        <option value="">학년 선택</option>
+<div class="topnav">
+  <div class="logo" onclick="location.href='index.php'">RAON</div>
+  <div class="category-bar">
+    <button id="btn-major" class="category-btn">전공</button>
+    <button id="btn-liberal" class="category-btn">교양</button>
+  </div>
+  <form id="searchForm" class="search-bar" method="get" action="search.php" autocomplete="off">
+    <input type="hidden" name="category" id="searchCategory">
+    <div id="major-filter" class="filter-group" style="display:none;position:relative;">
+      <!-- 학년 -->
+      <select id="gradeSelect" class="filter-sel">
+        <option value="">전체</option>
         <option value="1">1학년</option>
         <option value="2">2학년</option>
         <option value="3">3학년</option>
         <option value="4">4학년</option>
+        <option value="5">5학년</option>
       </select>
-    </span>
-    <input type="submit" value="검색">
+      <input type="hidden" id="searchGrade" name="grade">
+      <!-- 학과 2단 드롭다운 -->
+      <div id="majorSelectBtn" class="filter-sel" style="width:170px;position:relative;user-select:none;cursor:pointer;">전체</div>
+      <input type="hidden" id="selectedMajor" name="major">
+      <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:350px;top:36px;">
+        <div style="display:flex;">
+          <div id="collegeList" style="min-width:120px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
+          <div id="deptList" style="min-width:180px;padding:0 8px;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="liberal-filter" class="filter-group" style="display:none;">
+      <select id="liberalType" class="filter-sel">
+        <option value="">전체</option>
+        <option value="호심교양">호심교양</option>
+        <option value="균형교양">균형교양</option>
+      </select>
+      <input type="hidden" id="searchSubject" name="subject">
+    </div>
+    <input type="text" name="search" class="search-input" placeholder="검색어를 입력해 주세요.">
+    <button type="submit" class="search-btn">검색</button>
   </form>
-  <script>
-  // 전공-학과 선택
-  document.querySelectorAll('.sub-sub-item').forEach(item => {
-    item.onclick = function(e) {
-      e.stopPropagation();
-      document.getElementById('categoryInput').value = '전공';
-      document.getElementById('collegeInput').value = this.parentNode.parentNode.dataset.college;
-      document.getElementById('majorInput').value = this.dataset.major;
-      document.getElementById('subjectInput').value = '';
-      document.getElementById('categoryBtn').textContent = `전공 > ${this.parentNode.parentNode.dataset.college} > ${this.dataset.major}`;
-      document.getElementById('gradeSection').style.display = 'inline-block';
-    }
-  });
-  // 교양-분야 선택
-  document.querySelectorAll('.sub-item[data-subject]').forEach(item => {
-    item.onclick = function(e) {
-      e.stopPropagation();
-      document.getElementById('categoryInput').value = '교양';
-      document.getElementById('collegeInput').value = '';
-      document.getElementById('majorInput').value = '';
-      document.getElementById('subjectInput').value = this.dataset.subject;
-      document.getElementById('categoryBtn').textContent = `교양 > ${this.dataset.subject}`;
-      document.getElementById('gradeSection').style.display = 'none';
-      document.getElementById('gradeSelect').value = '';
-      document.getElementById('gradeInput').value = '';
-    }
-  });
-  // grade 선택하면 hidden에도 반영
-  document.getElementById('gradeSelect').onchange = function() {
-    document.getElementById('gradeInput').value = this.value;
-  };
-  // 페이지 새로고침시 기존 선택값 유지(gradeSection)
-  window.onload = function() {
-    if(document.getElementById('categoryInput').value === '전공') {
-      document.getElementById('gradeSection').style.display = 'inline-block';
-    }
-  };
-  </script>
-  <hr>
-  <?php
-  $category = $_GET['category'] ?? '';
-  $college  = $_GET['college'] ?? '';
-  $major    = $_GET['major'] ?? '';
-  $subject  = $_GET['subject'] ?? '';
-  $grade    = $_GET['grade'] ?? '';
-  $search   = $_GET['search'] ?? '';
+  <div class="auth-btns">
+    <?php if ($isLogin): ?>
+      <span class="username"><?=$name?>님</span>
+      <a href="post_book.html"><button>교재 판매</button></a>
+      <a href="mypage.php"><button>마이페이지</button></a>
+      <a href="logout.php?goindex=1"><button>로그아웃</button></a>
+    <?php else: ?>
+      <a href="register.html"><button>회원가입</button></a>
+      <a href="login.html"><button>로그인</button></a>
+    <?php endif; ?>
+  </div>
+</div>
+<div class="main-content">
+  <!-- 오늘 새로 올라온 책 -->
+  <div class="new-books-box">
+    <div class="new-books-title"><i class="fa fa-clock"></i> 오늘 새로 올라온 책</div>
+    <div class="book-list-row">
+    <?php
+      $conn = new mysqli("localhost", "root", "1234", "test");
+      $new_sql = "SELECT * FROM Books ORDER BY created_at DESC LIMIT 5";
+      $new_result = $conn->query($new_sql);
+      while($row = $new_result->fetch_assoc()) {
+        $book_id = $row['book_id'];
+        $img = $row['image_path'];
+        $interest_count = $row['interest_count'];
+        $desc = $row['category']=='전공' ? $row['major'] : $row['subject'];
+        $status = $row['status'];
+        $is_liked = false;
+        if ($isLogin) {
+          $sid = $_SESSION['student_id'];
+          $q = $conn->query("SELECT 1 FROM Interests WHERE student_id='$sid' AND book_id=$book_id");
+          if ($q && $q->num_rows>0) $is_liked = true;
+        }
+        echo "<div class='book-card'>";
+        echo "<a href='book_detail.php?id=$book_id'><img class='book-thumb' src='$img'></a>";
+        echo "<div class='book-title'>{$row['title']}";
+        if ($status == '판매중') {
+          echo '<span class="book-status sale">판매중</span>';
+        } else {
+          echo '<span class="book-status soldout">판매완료</span>';
+        }
+        echo "</div>";
+        echo "<div class='book-meta'>".htmlspecialchars($desc)."</div>";
+        echo "<div class='book-footer'>";
+        echo "<button class='heart-btn".($is_liked?' liked':'')."' data-book-id='$book_id'>";
+        echo "<i class='fa fa-heart'></i> <span class='interest-count'>$interest_count</span>";
+        echo "</button>";
+        echo "<span class='book-price'>".number_format($row['selling_price'])."원</span>";
+        echo "</div></div>";
+      }
+    ?>
+    </div>
+  </div>
 
-  $conn = new mysqli("localhost", "root", "1234", "test");
-  $where = "1=1";
-  if ($category) $where .= " AND category='$category'";
-
-  // 전공: major/college/grade, 교양: subject
-  if ($category == "전공") {
-    if ($major) $where .= " AND major='$major'";
-    if ($college) $where .= " AND college='$college'";
-    if ($grade) $where .= " AND grade='$grade'";
-  }
-  if ($category == "교양") {
-    if ($subject) $where .= " AND subject='$subject'";
-  }
-  // 검색(모든 책 공통)
-  if ($search) $where .= " AND (title LIKE '%$search%' OR author LIKE '%$search%')";
-
-  $sql = "SELECT * FROM Books WHERE $where ORDER BY created_at DESC";
-  $result = $conn->query($sql);
-
-  echo "<hr>";
-  if ($result->num_rows == 0) {
-    echo "<div>검색 결과가 없습니다.</div>";
-  }
-  while ($row = $result->fetch_assoc()) {
-    // 판매자 이름 조회
-    $seller_id = $row['seller_id'];
-    $user_result = $conn->query("SELECT name FROM Users WHERE student_id='$seller_id'");
-    $user = $user_result->fetch_assoc();
-    $seller_name = $user['name'] ?? '알 수 없음';
-
-    // 대표 이미지 (없으면 기본 이미지 표시)
-    $img_tag = $row['image_path'] && file_exists($row['image_path']) ?
-      "<img src='{$row['image_path']}' alt='책사진' class='book-img'>" :
-      "<div style='display:inline-block;width:80px;height:80px;background:#eee;margin-right:10px;vertical-align:middle;'></div>";
-
-    echo "<div class='book-row'>";
-    echo "<div class='book-info'>";
-    echo $img_tag;
-    echo "<div>";
-    echo "<a href='book_detail.php?id={$row['book_id']}' class='book-title'>{$row['title']}</a><br>";
-    echo "{$row['author']}";
-    echo "</div></div>";
-    echo "<div style='display:flex;align-items:center;gap:10px;'>";
-    echo "<span class='seller-name'>{$seller_name}</span>";
-    echo "<form action='interest.php' method='post' style='display:inline; margin:0;'>
-            <input type='hidden' name='book_id' value='{$row['book_id']}'>
-            <button type='submit' class='interest-btn'>♥ 관심</button>
-          </form>";
-    echo "<span class='price-tag'>{$row['selling_price']}원</span>";
-    echo "</div>";
-    echo "</div>";
-  }
-  $conn->close();
-  ?>
+  <!-- 많이 거래되는 전공책 TOP5 -->
+  <div class="bottom-row">
+    <div class="rank-box">
+      <div style="font-weight:bold;margin-bottom:10px;"><i class="fa fa-trophy"></i> 지금 많이 거래되는 전공책 TOP</div>
+      <ol>
+      <?php
+        $rank_sql = "
+        SELECT title, major, COUNT(*) cnt FROM Books B
+        JOIN Purchases P ON B.book_id = P.book_id
+        WHERE B.category='전공' AND B.status='판매완료'
+        GROUP BY title, major
+        ORDER BY cnt DESC LIMIT 5";
+        $rank_result = $conn->query($rank_sql);
+        $rankings = [];
+        while ($row = $rank_result->fetch_assoc()) $rankings[] = $row;
+        for ($i=0;$i<5;$i++) {
+          echo "<li><span class='top-label'>TOP ".($i+1)."</span>";
+          if (isset($rankings[$i])) {
+            echo htmlspecialchars($rankings[$i]['title']) . " <span style='color:#257'>(" . $rankings[$i]['major'] . ")</span>";
+          } else {
+            echo "<span class='rank-none'>None</span>";
+          }
+          echo "</li>";
+        }
+      ?>
+      </ol>
+    </div>
+    <div class="tip-box">
+      <b>중고 거래 판매 TIP!</b>
+      <ol>
+        <li>사진은 3장 이상! <br>(표지·옆면·사용감 보여 주기)</li>
+        <li>설명에 학기·상태·거래 방법 적기 <br>예: "2025-1학기/가벼운 필기/직거래"</li>
+        <li>적정 가격은 신간가의 50~70%</li>
+        <li>거래는 학교 인증 사용자와! <br>(사기 예방 및 안전한 거래)</li>
+      </ol>
+    </div>
+    <div class="go-curriculum">
+      <b>교과과정 바로 가기</b><br>
+      <img src="https://www.gwangju.ac.kr/_res/gwangju/img/common/logo.png" style="margin-top:6px;width:80px;">
+    </div>
+  </div>
+</div>
+<footer>© RAON</footer>
+<script src="script.js"></script>
 </body>
 </html>

@@ -45,7 +45,7 @@ $description    = $_POST['description'] ?? null;
 $image_path     = $main_image;
 
 
-$sql = "INSERT INTO Books (
+$sql = "INSERT INTO books (
   seller_id, category, subject, grade, college, major,
   title, author, publisher, publish_date, original_price, selling_price, description, image_path
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
