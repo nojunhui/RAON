@@ -185,8 +185,8 @@ aside.sidebar ul li {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin: 20px auto 0 auto; /* 위쪽 간격은 유지하면서 가운데 정렬 */
-    display: block; /*삭제 가능*/
+    margin: 20px auto 0 auto;
+    display: block;
 }
 
 .submit-btn:hover {
@@ -196,4 +196,75 @@ aside.sidebar ul li {
 
 .bottom-space {
     height: 400px;
-}   
+}       
+
+/* 탈퇴 팝업 오버레이 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none; /* 처음엔 숨김 */
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* 팝업 내용 박스 */
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-content p {
+  margin: 10px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.modal-content .sub-text {
+  font-size: 13px;
+  color: #666;
+}
+
+.modal-content input[type="password"] {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.modal-buttons {
+  margin-top: 20px;
+}
+
+.withdraw-confirm {
+  background-color: #f7d794;
+  color: #444;
+  font-weight: bold;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.withdraw-confirm:hover {
+  background-color: #eabf95;
+  color: white;
+}
