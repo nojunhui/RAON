@@ -1,3 +1,4 @@
+/* 등록한 글 목록 전용 스타일 */
 
 body {
   background-color: #fff1cc;
@@ -152,6 +153,11 @@ section.content > ul > li > a {
   color: #444;
   display: block;
   transition: color 0.3s ease;
+}
+
+section.content > ul > li > a:hover {
+  color: #eabf95;
+  font-weight: bold;
 }
 
 section.content > ul > li > a:hover {
