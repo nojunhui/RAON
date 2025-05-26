@@ -8,39 +8,84 @@
         .post-box { max-width:540px; margin:40px auto; background:#fff; border-radius:15px; box-shadow:0 1px 8px rgba(0,0,0,0.08); padding:34px 35px 34px 35px;}
         .post-title {font-size:1.29em;font-weight:bold;margin-bottom:25px;letter-spacing:2px;}
         .post-btn-row {display:flex;gap:12px;margin-bottom:23px;}
+        /* 아래는 index.php의 .category-btn에서 그대로 긁어온 버튼 스타일 */
         .post-type-btn {
-            border-radius:8px; border:1.5px solid #ffc093; background:#fff;
-            color:#c87d2e; font-weight:bold; font-size:1.07em;
-            width:110px; height:40px; cursor:pointer; transition:.13s;
+            width: 90px;
+            height: 30px;
+            background: #fff;
+            color: #c87d2e;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.06em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background .15s;
+            border: 1.5px solid #ffc093;
+            margin-bottom: 0;
         }
-        .post-type-btn.active { background:#ffc093; color:#fff;}
+        .post-type-btn.active, .post-type-btn.selected {
+            background: #FFC093 !important;
+            color: #fff;
+        }
         .post-filter { display:flex; gap:10px; margin-bottom:16px;}
         .input-row {margin-bottom:16px;}
         .input-row label {display:block;font-size:1em;margin-bottom:7px;font-weight:bold;color:#333;}
-        .input-row input, .input-row textarea {width:100%;border-radius:7px;border:1px solid #ffc093;padding:8px;font-size:1.05em;}
+        .input-row input, .input-row textarea, .input-row select {width:100%;border-radius:7px;border:1px solid #ffc093;padding:8px;font-size:1.05em;}
         .input-row textarea {resize:vertical;min-height:80px;}
         .submit-btn {width:100%;margin-top:15px;height:44px;font-size:1.1em;font-weight:bold;background:#ffc093;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+        .input-row input[type="file"] {padding:3px;}
+        .input-row input[type="date"] {padding:6px;}
+        .topnav {
+            display: flex;
+            align-items: center;
+            background: #FFECC2;
+            padding: 16px 24px 8px 24px;
+            justify-content: space-between;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 2.2em;
+            color: #222;
+            margin-right: 36px;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+        .auth-btns { display: flex; align-items: center; gap: 7px;}
+        .auth-btns button { width:110px; height:40px; border-radius: 9px; background: #fff; border: 1px solid #ffc093; color:#c87d2e; font-weight: bold; font-size:1.05em; cursor:pointer;}
+        .username { font-weight: bold; color: #222; margin-right: 13px; font-size:1.04em; }
+        /* 드롭다운 스타일 */
+        #majorDropdown {display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:300px;top:32px;}
+        #collegeList { min-width:110px; border-right:1px solid #f0c6a7; padding:0 8px;}
+        #deptList { min-width:150px; padding:0 8px;}
+        .college-item, .dept-item {
+            padding: 6px 11px; font-size: 1.01em; cursor: pointer; border-radius: 5px;
+            margin-bottom: 2px; white-space: nowrap; transition: background 0.13s;
+        }
+        .college-item:hover, .dept-item:hover { background: #ffe4cc;}
+        .college-item:first-child { font-weight:bold; color:#c87d2e; }
     </style>
 </head>
 <body>
 <div class="topnav">
     <div class="logo" onclick="location.href='index.php'">RAON</div>
-    <div style="flex:1;"></div>
-    <a href="mypage.php"><button>마이페이지</button></a>
-    <a href="logout.php"><button>로그아웃</button></a>
+    <div class="auth-btns">
+        <span class="username" id="username"></span>
+        <a href="mypage.php"><button type="button">마이페이지</button></a>
+        <a href="logout.php?goindex=1"><button type="button">로그아웃</button></a>
+    </div>
 </div>
+
 <div class="post-box">
     <div class="post-title">교재 등록</div>
-    <form action="post_book.php" method="post" enctype="multipart/form-data" id="regForm">
+    <form action="post_book.php" method="post" enctype="multipart/form-data" id="regForm" autocomplete="off">
         <div class="post-btn-row">
+            <!-- 버튼 id 꼭! btnMajor, btnLiberal -->
             <button type="button" id="btnMajor" class="post-type-btn">전공</button>
             <button type="button" id="btnLiberal" class="post-type-btn">교양</button>
         </div>
         <input type="hidden" name="category" id="categoryInput">
-
-        <!-- 전공 선택시 노출 -->
         <div id="major-filter" class="post-filter" style="display:none;">
-            <select id="gradeSelect" name="grade" class="filter-sel">
+            <select id="gradeSelect" name="grade" class="filter-sel" style="width:90px;">
                 <option value="">학년</option>
                 <option value="1">1학년</option>
                 <option value="2">2학년</option>
@@ -48,18 +93,15 @@
                 <option value="4">4학년</option>
                 <option value="5">5학년</option>
             </select>
-            <div id="majorSelectBtn" class="filter-sel" style="width:160px;position:relative;user-select:none;cursor:pointer;">학과</div>
+            <div id="majorSelectBtn" class="filter-sel" style="width:150px;position:relative;user-select:none;cursor:pointer;">학과</div>
             <input type="hidden" id="selectedMajor" name="major">
-            <!-- 학과 드롭다운(예시, 필요한 경우에 스크립트로 구현) -->
-            <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:320px;top:32px;">
+            <div id="majorDropdown">
                 <div style="display:flex;">
-                  <div id="collegeList" style="min-width:110px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
-                  <div id="deptList" style="min-width:150px;padding:0 8px;"></div>
+                  <div id="collegeList"></div>
+                  <div id="deptList"></div>
                 </div>
             </div>
         </div>
-
-        <!-- 교양 선택시 노출 -->
         <div id="liberal-filter" class="post-filter" style="display:none;">
             <select id="liberalType" name="subject" class="filter-sel">
                 <option value="">교양 종류</option>
@@ -67,8 +109,6 @@
                 <option value="균형교양">균형교양</option>
             </select>
         </div>
-
-        <!-- 공통 입력폼 -->
         <div class="input-row">
             <label>책 제목</label>
             <input type="text" name="title" required>
@@ -82,6 +122,14 @@
             <input type="text" name="publisher" required>
         </div>
         <div class="input-row">
+            <label>출판일</label>
+            <input type="date" name="publish_date">
+        </div>
+        <div class="input-row">
+            <label>원가(정가)</label>
+            <input type="number" name="original_price" min="0">
+        </div>
+        <div class="input-row">
             <label>판매 가격</label>
             <input type="number" name="selling_price" min="0" required>
         </div>
@@ -91,36 +139,186 @@
         </div>
         <div class="input-row">
             <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
-            <input type="file" name="images[]" accept="image/*" multiple required>
+            <input type="file" id="bookImages" accept="image/*" multiple style="display:none">
+            <button type="button" id="customFileBtn" style="width:100%;">파일 선택</button>
+            <div id="selectedFilesList" style="margin-top:10px;"></div>
         </div>
+
         <button type="submit" class="submit-btn">등록하기</button>
     </form>
 </div>
+
 <script>
-// 전공/교양 버튼 동작
+// 로그인한 사용자 이름 표시 (서버에서 sessionStorage.setItem('name', ...)으로 세팅해둘 것)
+window.onload = function() {
+    const name = sessionStorage.getItem('name');
+    if(name) document.getElementById('username').textContent = name + '님';
+};
+
+// 전공/교양 토글 동작 (아래 코드 그대로!)
 const btnMajor = document.getElementById('btnMajor');
 const btnLiberal = document.getElementById('btnLiberal');
 const majorFilter = document.getElementById('major-filter');
 const liberalFilter = document.getElementById('liberal-filter');
 const categoryInput = document.getElementById('categoryInput');
-
 btnMajor.onclick = function() {
     btnMajor.classList.add('active');
     btnLiberal.classList.remove('active');
-    majorFilter.style.display = 'flex';
+    majorFilter.style.display = '';
     liberalFilter.style.display = 'none';
     categoryInput.value = '전공';
 };
 btnLiberal.onclick = function() {
     btnLiberal.classList.add('active');
     btnMajor.classList.remove('active');
-    liberalFilter.style.display = 'flex';
+    liberalFilter.style.display = '';
     majorFilter.style.display = 'none';
     categoryInput.value = '교양';
 };
-// 최초 디폴트 (전공)
+// 최초 디폴트(전공)
 btnMajor.click();
+
+// 학년/학과 2단 드롭다운 (아래 내용은 그대로!)
+const departmentsByCollege = {
+  "공과대학": ["컴퓨터공학과", "전기공학과", "전자공학과", "기계공학과", "토목공학과", "건축학과", "화학공학과"],
+  "인문사회과학대학": ["행정학과", "사회복지학과", "유아교육과", "경영학과", "영어영문학과", "법학과", "심리학과"],
+  "보건복지대학": ["간호학과", "물리치료학과", "방사선학과", "치위생학과", "응급구조학과", "언어치료학과"],
+  "자연과학대학": ["식품영양학과", "생명과학과", "화학과", "수학과"],
+  "교육대학": ["초등교육과", "특수교육과", "유아교육과"],
+  "예술체육대학": ["미술학과", "음악학과", "체육학과", "무용학과"],
+  "문화산업대학": ["시각영상디자인학과", "산업디자인학과", "패션디자인학과", "스포츠과학부"]
+};
+const majorSelectBtn = document.getElementById('majorSelectBtn');
+const majorDropdown = document.getElementById('majorDropdown');
+const collegeList = document.getElementById('collegeList');
+const deptList = document.getElementById('deptList');
+const selectedMajorInput = document.getElementById('selectedMajor');
+function setMajor(val, txt) {
+  selectedMajorInput.value = val;
+  majorSelectBtn.textContent = txt;
+  majorDropdown.style.display = "none";
+}
+if (collegeList && deptList && selectedMajorInput && majorSelectBtn) {
+  collegeList.innerHTML = '';
+  let allItem = document.createElement('div');
+  allItem.textContent = "전체";
+  allItem.className = "college-item";
+  allItem.style.cursor = "pointer";
+  allItem.onclick = function(e){
+    setMajor("", "전체");
+    e.stopPropagation();
+  };
+  collegeList.appendChild(allItem);
+
+  Object.keys(departmentsByCollege).forEach(college => {
+    let cItem = document.createElement('div');
+    cItem.textContent = college;
+    cItem.className = "college-item";
+    cItem.style.cursor = "pointer";
+    cItem.onmouseenter = function() {
+      deptList.innerHTML = "";
+      let allDept = document.createElement('div');
+      allDept.textContent = "전체";
+      allDept.className = "dept-item";
+      allDept.style.cursor = "pointer";
+      allDept.onclick = function(e){
+        setMajor(college + " 전체", college + " 전체");
+        e.stopPropagation();
+      };
+      deptList.appendChild(allDept);
+      departmentsByCollege[college].forEach(dept => {
+        let dItem = document.createElement('div');
+        dItem.textContent = dept;
+        dItem.className = "dept-item";
+        dItem.style.cursor = "pointer";
+        dItem.onclick = function(e){
+          setMajor(dept, dept);
+          e.stopPropagation();
+        };
+        deptList.appendChild(dItem);
+      });
+    };
+    collegeList.appendChild(cItem);
+  });
+}
+if (majorSelectBtn && majorDropdown) {
+  majorSelectBtn.onclick = function(e) {
+    majorDropdown.style.display = majorDropdown.style.display === "block" ? "none" : "block";
+    e.stopPropagation();
+  };
+  document.body.addEventListener('click', function() {
+    if(majorDropdown) majorDropdown.style.display = 'none';
+  });
+}
+
+//////////////////////////////
+// 파일 누적 업로드 기능
+//////////////////////////////
+let fileList = [];
+const bookImages = document.getElementById('bookImages');
+const customFileBtn = document.getElementById('customFileBtn');
+const selectedFilesList = document.getElementById('selectedFilesList');
+
+customFileBtn.onclick = () => bookImages.click();
+
+bookImages.onchange = function(e) {
+  let newFiles = Array.from(bookImages.files);
+  for (let f of newFiles) {
+    if (fileList.length >= 5) break;
+    if (!fileList.some(x => x.name===f.name && x.size===f.size && x.lastModified===f.lastModified)) {
+      fileList.push(f);
+    }
+  }
+  if (fileList.length > 5) fileList = fileList.slice(0, 5);
+  showFiles();
+}
+function showFiles() {
+  selectedFilesList.innerHTML = '';
+  if (fileList.length === 0) return;
+  fileList.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.style.marginBottom = '7px';
+    div.innerHTML =
+      `<b>${i===0 ? '[대표]' : ''}</b> ${f.name} (${(f.size/1024).toFixed(1)}KB)
+       <button type="button" onclick="removeFile(${i})" style="margin-left:8px;">삭제</button>`;
+    selectedFilesList.appendChild(div);
+  });
+}
+window.removeFile = function(idx) {
+  fileList.splice(idx, 1);
+  showFiles();
+}
+
+// 폼 전송시 파일들을 formData에 append(이벤트 오버라이드)
+document.getElementById('regForm').onsubmit = function(e){
+  if(fileList.length===0){
+    alert('사진을 1장 이상 선택하세요.');
+    e.preventDefault();
+    return false;
+  }
+  // 기존 submit 막고, formData로 직접 submit
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  // 기존 images[] 삭제 후 새로 append
+  formData.delete('images[]');
+  for(let i=0;i<fileList.length;i++){
+    formData.append('images[]', fileList[i]);
+  }
+  // 실제 submit
+  fetch(form.action, {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.text())
+  .then(html => {
+    // 성공 시 페이지 이동(또는 성공 메시지 출력)
+    document.body.innerHTML = html;
+  }).catch(err => {
+    alert('업로드 오류: '+err);
+  });
+  return false;
+}
 </script>
-<!-- 학과/단과대 드롭다운 관련 JS가 필요하면 별도 요청해주세요 -->
 </body>
 </html>
