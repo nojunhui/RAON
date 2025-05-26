@@ -37,6 +37,8 @@
             <button type="button" id="btnLiberal" class="post-type-btn">교양</button>
         </div>
         <input type="hidden" name="category" id="categoryInput">
+
+        <!-- 전공 선택시 노출 -->
         <div id="major-filter" class="post-filter" style="display:none;">
             <select id="gradeSelect" name="grade" class="filter-sel">
                 <option value="">학년</option>
@@ -48,6 +50,7 @@
             </select>
             <div id="majorSelectBtn" class="filter-sel" style="width:160px;position:relative;user-select:none;cursor:pointer;">학과</div>
             <input type="hidden" id="selectedMajor" name="major">
+            <!-- 학과 드롭다운(예시, 필요한 경우에 스크립트로 구현) -->
             <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:320px;top:32px;">
                 <div style="display:flex;">
                   <div id="collegeList" style="min-width:110px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
@@ -55,6 +58,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- 교양 선택시 노출 -->
         <div id="liberal-filter" class="post-filter" style="display:none;">
             <select id="liberalType" name="subject" class="filter-sel">
                 <option value="">교양 종류</option>
@@ -62,6 +67,8 @@
                 <option value="균형교양">균형교양</option>
             </select>
         </div>
+
+        <!-- 공통 입력폼 -->
         <div class="input-row">
             <label>책 제목</label>
             <input type="text" name="title" required>
@@ -89,7 +96,6 @@
         <button type="submit" class="submit-btn">등록하기</button>
     </form>
 </div>
-<script src="script.js"></script>
 <script>
 // 전공/교양 버튼 동작
 const btnMajor = document.getElementById('btnMajor');
@@ -97,22 +103,24 @@ const btnLiberal = document.getElementById('btnLiberal');
 const majorFilter = document.getElementById('major-filter');
 const liberalFilter = document.getElementById('liberal-filter');
 const categoryInput = document.getElementById('categoryInput');
+
 btnMajor.onclick = function() {
     btnMajor.classList.add('active');
     btnLiberal.classList.remove('active');
-    majorFilter.style.display = '';
+    majorFilter.style.display = 'flex';
     liberalFilter.style.display = 'none';
     categoryInput.value = '전공';
 };
 btnLiberal.onclick = function() {
     btnLiberal.classList.add('active');
     btnMajor.classList.remove('active');
-    liberalFilter.style.display = '';
+    liberalFilter.style.display = 'flex';
     majorFilter.style.display = 'none';
     categoryInput.value = '교양';
 };
 // 최초 디폴트 (전공)
 btnMajor.click();
 </script>
+<!-- 학과/단과대 드롭다운 관련 JS가 필요하면 별도 요청해주세요 -->
 </body>
 </html>
