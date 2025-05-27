@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RAON 마이페이지 - 회원정보수정</title>
+  <link rel="stylesheet" href="profile-update.css">
+
+</head>
+<body>
+  <div class="container">
+    <!-- 헤더 -->
+     <header class="header" role="banner">
+      <h1>RAON</h1>
+      <input type="text" placeholder="검색어를 입력해 주세요." aria-label="검색어 입력" />
+      <button type="button" aria-label="검색">검색</button>
+      <nav class="header-buttons" role="navigation" aria-label="헤더 주요 메뉴">
+        <button type="button">교재 판매</button>
+        <button type="button" id="goToMypage">마이페이지</button>
+        <button type="button">로그아웃</button>
+      </nav>
+    </header>
+
+    <!-- 메인 영역 -->
+    <main class="main">
+      <!-- 사이드바 -->
+      <aside class="sidebar" role="complementary" aria-label="마이페이지 메뉴">
+        <ul>
+          <li tabindex="0">회원정보 수정</li>
+          <li tabindex="0">등록한 글 목록</li>
+          <li tabindex="0">관심 책 목록</li>
+          <li tabindex="0">구매 / 판매 기록</li>
+          <li tabindex="0">채팅</li>
+        </ul>
+      </aside>
+
+      <!-- 콘텐츠 -->
+      <section class="content" role="main" tabindex="0">
+        <h2>회원정보 수정</h2>
+        
+        <form>
+          <div class="form-group">
+            <label>• 비밀번호</label>
+            <input type="password" placeholder="현재 비밀번호" />
+            <input type="password" placeholder="새 비밀번호" style="margin-top:10px;" />
+            <input type="password" placeholder="새 비밀번호 재입력" style="margin-top:10px;" />
+          </div>
+
+          <div class="form-group">
+            <label>• 전화번호</label>
+            <div class="form-row">
+              <select>
+                <option>010</option>
+                <option>011</option>
+                <option>016</option>
+              </select>
+              <input type="text" placeholder="0000" maxlength="4" />
+              <input type="text" placeholder="0000" maxlength="4" />
+            </div>
+          </div>
+
+          <div class="withdraw">회원탈퇴</div>
+
+          <button type="submit" class="submit-btn">회원정보 수정</button>
+        </form>
+
+        
+        <div class="bottom-space"></div>
+      </section>
+    </main>
+  </div>
+  <!-- 회원탈퇴 팝업 -->
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal-content">
+    <h3>회원탈퇴</h3>
+    <p>정말로 탈퇴하시겠습니까?</p>
+    <p class="sub-text">계정을 삭제하시려면 현재 사용 중인 비밀번호를 입력하세요.</p>
+    <input type="password" placeholder="비밀번호 입력" />
+    <div class="modal-buttons">
+      <button class="withdraw-confirm">회원 탈퇴</button>
+    </div>
+  </div>
+</div>
+  <script src="../script.js"></script>
+</body>
+</html>

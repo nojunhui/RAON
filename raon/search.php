@@ -11,6 +11,8 @@ $page = max(1, intval($_GET['page'] ?? 1));
 $perPage = 5;
 $start = ($page-1)*$perPage;
 ?>
+<?php include 'header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,59 +23,7 @@ $start = ($page-1)*$perPage;
 </head>
 <body>
 <!-- ===================== 상단바 (index와 100% 동일하게) ======================= -->
-<div class="topnav">
-  <div class="logo" onclick="location.href='index.php'">RAON</div>
-  <div class="category-bar">
-    <button id="btn-major" class="category-btn">전공</button>
-    <button id="btn-liberal" class="category-btn">교양</button>
-  </div>
-  <form id="searchForm" class="search-bar" method="get" action="search.php" autocomplete="off">
-    <input type="hidden" name="category" id="searchCategory" value="<?=htmlspecialchars($category)?>">
-    <div id="major-filter" class="filter-group" style="display:none;position:relative;">
-      <select id="gradeSelect" class="filter-sel">
-        <option value="">전체</option>
-        <option value="1" <?=($grade=="1"?"selected":"")?>>1학년</option>
-        <option value="2" <?=($grade=="2"?"selected":"")?>>2학년</option>
-        <option value="3" <?=($grade=="3"?"selected":"")?>>3학년</option>
-        <option value="4" <?=($grade=="4"?"selected":"")?>>4학년</option>
-        <option value="5" <?=($grade=="5"?"selected":"")?>>5학년</option>
-      </select>
-      <input type="hidden" id="searchGrade" name="grade" value="<?=htmlspecialchars($grade)?>">
-      <!-- 2단 학과 드롭다운 -->
-      <div id="majorSelectBtn" class="filter-sel" style="width:170px;position:relative;user-select:none;cursor:pointer;">
-        <?= $major ? htmlspecialchars($major) : "전체" ?>
-      </div>
-      <input type="hidden" id="selectedMajor" name="major" value="<?=htmlspecialchars($major)?>">
-      <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:350px;top:36px;">
-        <div style="display:flex;">
-          <div id="collegeList" style="min-width:120px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
-          <div id="deptList" style="min-width:180px;padding:0 8px;"></div>
-        </div>
-      </div>
-    </div>
-    <div id="liberal-filter" class="filter-group" style="display:none;">
-      <select id="liberalType" class="filter-sel">
-        <option value="">전체</option>
-        <option value="호심교양" <?=($subject=="호심교양"?"selected":"")?>>호심교양</option>
-        <option value="균형교양" <?=($subject=="균형교양"?"selected":"")?>>균형교양</option>
-      </select>
-      <input type="hidden" id="searchSubject" name="subject" value="<?=htmlspecialchars($subject)?>">
-    </div>
-    <input type="text" name="search" class="search-input" value="<?=htmlspecialchars($search)?>" placeholder="검색어를 입력해 주세요.">
-    <button type="submit" class="search-btn">검색</button>
-  </form>
-  <div class="auth-btns">
-    <?php if ($isLogin): ?>
-      <span class="username"><?=$name?>님</span>
-      <a href="post_book.html"><button>교재 판매</button></a>
-      <a href="mypage.php"><button>마이페이지</button></a>
-      <a href="logout.php?goindex=1"><button>로그아웃</button></a>
-    <?php else: ?>
-      <a href="register.html"><button>회원가입</button></a>
-      <a href="login.html"><button>로그인</button></a>
-    <?php endif; ?>
-  </div>
-</div>
+
 
 <!-- ===================== 검색 결과 ======================= -->
 <div class="result-wrapper">
