@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RAON 회원가입</title>
+  <title>RAON 비밀번호 재설정</title>
   <style>
+    /* 회원가입 페이지와 유사한 스타일 */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
     @font-face {
       font-family: 'RIDIBatang';
@@ -30,7 +31,6 @@
       max-width: 700px;
       margin: 100px auto;
       background-color: white;
-      border: #4A2E1E;
       border-radius: 10px;
       box-shadow: 0 0 10px #4A2E1E;
       padding: 60px;
@@ -63,7 +63,6 @@
       color: #4A2E1E;
       font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
     }
-    input[type="text"],
     input[type="password"] {
       width: 100%;
       padding: 20px;
@@ -77,7 +76,6 @@
       transition: box-shadow 0.25s ease;
       font-size: 16px;
     }
-    input[type="text"]:focus,
     input[type="password"]:focus {
       outline: none;
       box-shadow: 0 0 8px 3px rgba(198, 140, 46, 0.5);
@@ -111,47 +109,41 @@
 <body>
   <div class="logo" onclick="location.href='index.php'">RAON</div>
   <div class="container">
-    <h2>회원가입</h2>
-    <form action="register.php" method="post" onsubmit="return handleSignup(event)">
-      <label for="studentId">학번</label>
-      <input type="text" id="studentId" name="student_id" placeholder="학번 8자리 입력" />
-      
-      <label for="password">비밀번호</label>
-      <input type="password" id="password" name="password" placeholder="비밀번호 입력" />
-      
-      <label for="passwordConfirm">비밀번호 확인</label>
-      <input type="password" id="passwordConfirm" placeholder="비밀번호 재입력" />
-      
-      <label for="name">이름</label>
-      <input type="text" id="name" name="name" placeholder="이름 입력" />
-      
-      <label for="phone">전화번호</label>
-      <input type="text" id="phone" name="phone" placeholder="전화번호 입력" />
-      
-      <button class="submit-btn" type="submit">회원가입</button>
+    <h2>비밀번호 재설정</h2>
+    <form action="reset_pw.php" method="post" onsubmit="return handleReset(event)">
+      <input type="hidden" id="studentId" name="student_id" value="">
+      <label for="newPassword">새 비밀번호</label>
+      <input type="password" id="newPassword" name="new_password" placeholder="새 비밀번호 입력" />
+      <label for="newPasswordConfirm">새 비밀번호 확인</label>
+      <input type="password" id="newPasswordConfirm" placeholder="새 비밀번호 재입력" />
+      <button class="submit-btn" type="submit">완료</button>
     </form>
   </div>
   <div class="footer">© RAON</div>
   <script>
-    // 모든 input에 포커스하면 placeholder 사라지고, blur 시 값 없으면 복귀
-    ['studentId', 'password', 'passwordConfirm', 'name', 'phone'].forEach(function(id){
-      const input = document.getElementById(id);
-      if (!input) return;
-      const ori = input.placeholder;
-      input.addEventListener('focus', function() { input.placeholder = ''; });
-      input.addEventListener('blur', function() { if (!input.value) input.placeholder = ori; });
-    });
+    // URL 파라미터에서 student_id 받아서 hidden input에 세팅
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('student_id');
+    if(studentId) {
+      document.getElementById('studentId').value = studentId;
+    } else {
+      alert('잘못된 접근입니다.');
+      window.location.href = 'find_pw.html';
+    }
 
-    function handleSignup(event) {
-      const password = document.getElementById('password').value;
-      const passwordConfirm = document.getElementById('passwordConfirm').value;
-
-      if(password !== passwordConfirm){
-        alert('비밀번호가 서로 다릅니다. 재확인해주세요.');
+    function handleReset(event){
+      const newPassword = document.getElementById('newPassword').value;
+      const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+      if(newPassword === "" || newPasswordConfirm === "") {
+        alert('새 비밀번호를 입력해주세요.');
         event.preventDefault();
         return false;
       }
-      // 모든 항목은 form 기본 submit으로 서버에 전송됩니다.
+      if(newPassword !== newPasswordConfirm) {
+        alert('새 비밀번호가 서로 다릅니다. 재확인해주세요.');
+        event.preventDefault();
+        return false;
+      }
       return true;
     }
   </script>

@@ -54,3 +54,16 @@ $name = $isLogin ? $_SESSION['name'] : null;
     <?php endif; ?>
   </div>
 </div>
+
+<script>
+  // 검색 input에 placeholder 포커스 시 사라지고, blur 시 내용 없으면 복귀
+  const searchInput = document.querySelector('.search-input');
+  if (searchInput) {
+    const oriPlaceholder = searchInput.placeholder;
+    searchInput.addEventListener('focus', () => searchInput.placeholder = '');
+    searchInput.addEventListener('blur', () => {
+      if (!searchInput.value) searchInput.placeholder = oriPlaceholder;
+    });
+  }
+</script>
+

@@ -8,7 +8,6 @@
         .post-box { max-width:540px; margin:40px auto; background:#fff; border-radius:15px; box-shadow:0 1px 8px rgba(0,0,0,0.08); padding:34px 35px 34px 35px;}
         .post-title {font-size:1.29em;font-weight:bold;margin-bottom:25px;letter-spacing:2px;}
         .post-btn-row {display:flex;gap:12px;margin-bottom:23px;}
-        /* 아래는 index.php의 .category-btn에서 그대로 긁어온 버튼 스타일 */
         .post-type-btn {
             width: 90px;
             height: 30px;
@@ -32,8 +31,42 @@
         .input-row label {display:block;font-size:1em;margin-bottom:7px;font-weight:bold;color:#333;}
         .input-row input, .input-row textarea, .input-row select {width:100%;border-radius:7px;border:1px solid #ffc093;padding:8px;font-size:1.05em;}
         .input-row textarea {resize:vertical;min-height:80px;}
-        .submit-btn {width:100%;margin-top:15px;height:44px;font-size:1.1em;font-weight:bold;background:#ffc093;color:#fff;border:none;border-radius:8px;cursor:pointer;}
-        .input-row input[type="file"] {padding:3px;}
+        .submit-btn {width:100%;margin-top:15px;height:44px;font-size:1.1em;font-weight:bold;background:#965426;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+
+        /* 파일 업로드 커스텀 */
+        .custom-file-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 9px;
+  padding: 12px 18px;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto 2px auto;  /* ← 이 부분! */
+  justify-content: center;  /* ← 이 부분! */
+}
+        .pretty-file-btn {
+          background: #ffc093;
+          color: #fff;
+          font-weight: bold;
+          border: none;
+          border-radius: 7px;
+          font-size: 1em;
+          padding: 8px 22px;
+          cursor: pointer;
+          box-shadow: 0 1px 5px 0 #f8e0c1a9;
+          transition: background 0.14s;
+        }
+        .pretty-file-btn:hover {
+          background: #562502;
+        }
+        .file-info {
+          color: #000000;
+          font-size: 1.02em;
+          font-weight: bold;
+          margin-left: 2px;
+          letter-spacing: 0.02em;
+        }
         .input-row input[type="date"] {padding:6px;}
         .topnav {
             display: flex;
@@ -63,6 +96,8 @@
         }
         .college-item:hover, .dept-item:hover { background: #ffe4cc;}
         .college-item:first-child { font-weight:bold; color:#c87d2e; }
+
+        
     </style>
 </head>
 <body>
@@ -79,7 +114,6 @@
     <div class="post-title">교재 등록</div>
     <form action="post_book.php" method="post" enctype="multipart/form-data" id="regForm" autocomplete="off">
         <div class="post-btn-row">
-            <!-- 버튼 id 꼭! btnMajor, btnLiberal -->
             <button type="button" id="btnMajor" class="post-type-btn">전공</button>
             <button type="button" id="btnLiberal" class="post-type-btn">교양</button>
         </div>
@@ -137,25 +171,30 @@
             <label>상세 설명</label>
             <textarea name="description"></textarea>
         </div>
+        <!-- 여기만 달라짐! -->
         <div class="input-row">
-            <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
-            <input type="file" id="bookImages" accept="image/*" multiple style="display:none">
-            <button type="button" id="customFileBtn" style="width:100%;">파일 선택</button>
-            <div id="selectedFilesList" style="margin-top:10px;"></div>
+          <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
+          <div class="custom-file-wrap">
+            <div class="custom-file" style="margin-top:5px; gap: 10px">
+            <button type="button" id="customFileBtn" class="pretty-file-btn">파일 선택</button>
+            <span id="selectedFilesText" class="file-info">선택된 파일 없음</span>
+            <input type="file" id="bookImages" accept="image/*" multiple style="display:none;">
+          </div>
+          <div id="selectedFilesList"></div>
         </div>
-
-        <button type="submit" class="submit-btn">등록하기</button>
+        <div class="input-row" style="margin-top:10px;">
+          <button type="submit" class="submit-btn">등록하기</button>
+        </div>
     </form>
 </div>
 
 <script>
-// 로그인한 사용자 이름 표시 (서버에서 sessionStorage.setItem('name', ...)으로 세팅해둘 것)
 window.onload = function() {
     const name = sessionStorage.getItem('name');
     if(name) document.getElementById('username').textContent = name + '님';
 };
 
-// 전공/교양 토글 동작 (아래 코드 그대로!)
+// 전공/교양 토글 동작
 const btnMajor = document.getElementById('btnMajor');
 const btnLiberal = document.getElementById('btnLiberal');
 const majorFilter = document.getElementById('major-filter');
@@ -175,10 +214,9 @@ btnLiberal.onclick = function() {
     majorFilter.style.display = 'none';
     categoryInput.value = '교양';
 };
-// 최초 디폴트(전공)
 btnMajor.click();
 
-// 학년/학과 2단 드롭다운 (아래 내용은 그대로!)
+// 학년/학과 2단 드롭다운
 const departmentsByCollege = {
   "공과대학": ["컴퓨터공학과", "전기공학과", "전자공학과", "기계공학과", "토목공학과", "건축학과", "화학공학과"],
   "인문사회과학대학": ["행정학과", "사회복지학과", "유아교육과", "경영학과", "영어영문학과", "법학과", "심리학과"],
@@ -252,11 +290,12 @@ if (majorSelectBtn && majorDropdown) {
 }
 
 //////////////////////////////
-// 파일 누적 업로드 기능
+// 파일 업로드 UI & 파일명 표시
 //////////////////////////////
 let fileList = [];
 const bookImages = document.getElementById('bookImages');
 const customFileBtn = document.getElementById('customFileBtn');
+const selectedFilesText = document.getElementById('selectedFilesText');
 const selectedFilesList = document.getElementById('selectedFilesList');
 
 customFileBtn.onclick = () => bookImages.click();
@@ -270,8 +309,17 @@ bookImages.onchange = function(e) {
     }
   }
   if (fileList.length > 5) fileList = fileList.slice(0, 5);
+
+  // 파일명 텍스트 출력
+  if (fileList.length === 0) {
+    selectedFilesText.textContent = "선택된 파일 없음";
+  } else {
+    let names = fileList.map(f => f.name);
+    selectedFilesText.textContent = names.join(', ');
+  }
   showFiles();
 }
+
 function showFiles() {
   selectedFilesList.innerHTML = '';
   if (fileList.length === 0) return;
@@ -286,6 +334,13 @@ function showFiles() {
 }
 window.removeFile = function(idx) {
   fileList.splice(idx, 1);
+  // 파일명 텍스트도 업데이트!
+  if (fileList.length === 0) {
+    selectedFilesText.textContent = "선택된 파일 없음";
+  } else {
+    let names = fileList.map(f => f.name);
+    selectedFilesText.textContent = names.join(', ');
+  }
   showFiles();
 }
 

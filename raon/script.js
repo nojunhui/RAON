@@ -190,3 +190,49 @@ document.addEventListener('click', function(e){
     }
   }
 });
+
+
+document.getElementById('customFileBtn').onclick = function() {
+  document.getElementById('bookImages').click();
+};
+
+document.getElementById('bookImages').onchange = function() {
+  const files = this.files;
+  const list = document.getElementById('selectedFilesList');
+
+  if (!files.length) {
+    list.textContent = "선택된 파일이 없습니다.";
+    return;
+  }
+
+  if (files.length > 5) {
+    alert("최대 5개까지만 선택할 수 있습니다.");
+    this.value = ""; // 선택 초기화
+    list.textContent = "선택된 파일이 없습니다.";
+    return;
+  }
+
+  let names = Array.from(files).map(file => file.name);
+  list.textContent = names.join(', ');
+};
+
+// ⬇️ 폼 제출 시 5개 초과면 강제 중단!
+document.getElementById('regForm').onsubmit = function(e) {
+  const files = document.getElementById('bookImages').files;
+  if (files.length > 5) {
+    alert("최대 5개까지만 선택할 수 있습니다.");
+    e.preventDefault();
+    return false;
+  }
+  // 기타 유효성 검사 ...
+};
+
+const studentInput = document.getElementById('student_id');
+const oriPlaceholder = studentInput.placeholder;
+
+studentInput.addEventListener('focus', function() {
+  studentInput.placeholder = '';
+});
+studentInput.addEventListener('blur', function() {
+  if (!studentInput.value) studentInput.placeholder = oriPlaceholder;
+});

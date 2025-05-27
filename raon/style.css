@@ -169,7 +169,10 @@ body {
 .auth-btns button { width:110px; height:40px; border-radius: 9px; background: #fff; border: 1px solid #ffc093; color:#c87d2e; font-weight: bold; font-size:1.05em; cursor:pointer;}
 .username { font-weight: bold; color: #222; margin-right: 13px; font-size:1.04em;}
 
-.main-content { max-width: 1500px; margin: 300px auto 0 auto; }
+.main-content {
+  max-width: 1500px;
+  margin: 100px auto 0 auto; /* 위쪽 여백을 40px로 줄임 */
+}
 .new-books-box { background: #fff; padding: 22px; border-radius: 13px; margin-bottom: 50px;}
 .new-books-title {font-size: 1.19em; font-weight:bold; margin-bottom:50px;}
 .book-list-row { display: flex; gap: 18px;}
@@ -500,18 +503,34 @@ button, input, select, textarea {
 
 .lion-group {
   position: absolute;
-  top: 90px;        /* topnav 기준 아래로 얼마 띄울지 (조정 가능) */
-  right: 135px;      /* 오른쪽 여백 */
+  top: -15px;        /* topnav 기준 아래로 얼마 띄울지 (조정 가능) */
+  right: 150px;      /* 오른쪽 여백 */
   z-index: 100;
 }
 .lion-group img {
-  height: 470px;     /* 사자들 이미지 크기 */
-  /* 필요하면 width: auto; 추가 가능 */
+  width: 450px;   /* 원하는 크기로 조정 */
+  height: auto;
 }
 @media (max-width: 900px) {
   .lion-group img {
     height: 45px;
   }
+}
+
+.lion-group {
+  position: absolute;  /* 또는 fixed, 필요에 따라 */
+  z-index: 10;
+}
+
+.auth-btns {
+  position: relative;  /* 기본이 static이면 relative로 바꿔주세요! */
+  z-index: 1000;  /* lion-group보다 크면 무조건 위에! */
+}
+
+/* 또는 회원가입 버튼만 */
+.signup-btn {
+  position: relative;
+  z-index: 2000;
 }
 
 .my-books-list {
@@ -572,3 +591,5 @@ button, input, select, textarea {
 .mark-sold-btn:hover {
   background: #e36c09;
 }
+
+

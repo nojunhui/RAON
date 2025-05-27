@@ -19,7 +19,10 @@ if ($user && password_verify($password, $user['password'])) {
   header("Location: index.php");
   exit;
 } else {
-  echo "로그인 실패. <a href='login.html'>다시 시도</a>";
+  echo "<script>
+        alert('로그인에 실패하였습니다.');
+        window.location.href = 'login.html';
+    </script>";
 }
 $stmt->close(); $conn->close();
 ?>

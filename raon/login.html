@@ -2,16 +2,199 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>로그인</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=1024">
+  <title>RAON 로그인</title>
+  <!-- 폰트어썸 및 RIDIBatang 글꼴 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+    @font-face {
+      font-family: 'RIDIBatang';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+      background: #FFEDC7;
+      color: #4A2E1E;
+    }
+    body {
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+      color: #4A2E1E;
+    }
+    .logo {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #4A2E1E;
+      letter-spacing: 2px;
+      margin: 34px 0 0 40px;
+      text-shadow: 3px 4px 2px #d5b98c29;
+      user-select: none;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+       cursor: pointer;
+    }
+    .login-box {
+      width: 1050px;
+      max-width: 96vw;
+      background: #fff;
+      border-radius: 16px;
+      margin: 120px auto 0 auto;
+      min-height: 570px;
+      box-shadow: 0 4px 24px 0 rgba(70,48,15,0.07);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+    }
+    .lion-group {
+      position: absolute;
+      top: 25px;         
+      right: 360px;       
+      z-index: 10;
+    }
+    .lion-group img {
+      height: 400px;      
+    }
+    @media (max-width: 900px) {
+      .lion-group {
+        top: 20px;
+        right: 12px;
+      }
+      .lion-group img {
+        height: 30px;
+      }
+    }
+    .login-title {
+      font-size: 2.2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 95px 0 46px 0;
+      letter-spacing: 1.2px;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+    }
+    .login-form {
+      width: 480px;
+      max-width: 96vw;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+    }
+    .login-input {
+      padding: 18px 18px;
+      margin-bottom: 19px;
+      border: 2px solid #b89a76;
+      border-radius: 8px;
+      font-size: 1.1em;
+      background: #FFFAF0;
+      outline: none;
+      text-align: center;
+      transition: border 0.14s;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+    }
+    .login-input:focus {
+      border: 2px solid #C68C2E;
+      background: #FFFBE8;
+    }
+    .login-sub-links {
+      text-align: right;
+      font-size: 0.99em;
+      color: #4A2E1E;
+      margin: -14px 5px 24px 0;
+      letter-spacing: -0.6px;
+    }
+    .login-sub-links a {
+      color: #4A2E1E;
+      text-decoration: none;
+      padding: 0 3px;
+      transition: color 0.14s;
+      font-weight: 400;
+    }
+    .login-sub-links a:hover {
+      color: #c6872d;
+      text-decoration: underline;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 18px 0;
+      background: #FFE4BF;
+      border: 2px solid #b89a76;
+      border-radius: 8px;
+      font-size: 1.22em;
+      font-weight: bold;
+      color: #4A2E1E;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.12s, box-shadow 0.13s;
+      box-shadow: 0 1px 9px 0 #ebd5b16f;
+      letter-spacing: 1px;
+      font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
+    }
+    .login-btn:hover {
+      background: #ffe4a1;
+    }
+    .footer {
+      text-align: center;
+      color: #b69a63;
+      font-size: 1.01em;
+      margin-top: 43px;
+      letter-spacing: 1.3px;
+      width: 100vw;
+    }
+    @media (max-width: 900px) {
+      .login-box { min-width: 96vw; width: 99vw; }
+      .login-form { width: 95vw; }
+      .lion-img { right: 10px; width: 140px; top: -36px;}
+      .login-title { margin-top: 75px; }
+    }
+    @media (max-width: 600px) {
+      .login-box { min-width: unset; width: 99vw; }
+      .login-form { width: 98vw; }
+      .lion-img { right: 3vw; width: 100px; top: -28px;}
+      .login-title { font-size: 1.3em; margin-top: 52px;}
+    }
+  </style>
 </head>
 <body>
-  <h2>로그인</h2>
-  <form action="login.php" method="post">
-    학번: <input type="text" name="student_id" maxlength="8" required><br>
-    비밀번호: <input type="password" name="password" required><br>
-    <input type="submit" value="로그인">
-  </form>
-  <a href="register.html">회원가입</a>
+  <div class="logo" onclick="location.href='index.php'">RAON</div>
+  
+  <div class="lion-group">
+    <img src="/raon/uploads/lion_group.png" alt="사자들" />
+  </div>
+  <div class="login-box">
+    <div class="login-title">로그인</div>
+    <form class="login-form" action="login.php" method="post" autocomplete="off">
+      <input type="text" id="student_id" name="student_id" maxlength="8" class="login-input" placeholder="학번을 입력해주세요." required>
+      <input type="password" id="password" name="password" class="login-input" placeholder="비밀번호를 입력해주세요." required>
+      <div class="login-sub-links">
+        <a href="register.html">회원가입</a> / 
+        <a href="find_pw.html">비밀번호 찾기</a>
+      </div>
+      <button type="submit" class="login-btn">로그인</button>
+    </form>
+  </div>
+  <div class="footer">© RAON</div>
+  <script>
+    // placeholder 포커스 시 즉시 사라지게
+    function applyPlaceholderOnFocus(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const ori = input.placeholder;
+      input.addEventListener('focus', () => input.placeholder = '');
+      input.addEventListener('blur', () => { if (!input.value) input.placeholder = ori; });
+    }
+    applyPlaceholderOnFocus('student_id');
+    applyPlaceholderOnFocus('password');
+  </script>
 </body>
 </html>
