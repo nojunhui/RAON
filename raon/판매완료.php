@@ -19,7 +19,6 @@ $result = $conn->query($sql);
     <title>마이페이지 | RAON</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 위에서 안내한 CSS를 직접 넣어도 됨 */
     </style>
 </head>
 <body>

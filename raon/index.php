@@ -17,6 +17,7 @@ $name = $isLogin ? $_SESSION['name'] : null;
 <div class="lion-group">
   <img src="/raon/uploads/lion_group.png" alt="사자들" />
 </div>
+
   <!-- 가운데 정렬용 wrapper -->
   
 
@@ -131,7 +132,7 @@ for ($i = 0; $i < 5; $i++):
 </div>
   </div>
 </div>
-<footer>© RAON</footer>
+<footer class="footer">© RAON</footer>
 <script src="script.js"></script>
 </body>
 </html>

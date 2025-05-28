@@ -503,23 +503,26 @@ button, input, select, textarea {
 
 .lion-group {
   position: absolute;
-  top: -15px;        /* topnav 기준 아래로 얼마 띄울지 (조정 가능) */
-  right: 150px;      /* 오른쪽 여백 */
-  z-index: 100;
-}
-.lion-group img {
-  width: 450px;   /* 원하는 크기로 조정 */
-  height: auto;
-}
-@media (max-width: 900px) {
-  .lion-group img {
-    height: 45px;
-  }
+  top: 65px;
+  left: 1400px;
+  z-index: 10;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.lion-group {
-  position: absolute;  /* 또는 fixed, 필요에 따라 */
-  z-index: 10;
+.lion-group img {
+  height: 150px;
+  max-width: 300px;
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .lion-group img {
+    height: 100px;
+    max-width: 80px;
+  }
 }
 
 .auth-btns {
@@ -592,4 +595,11 @@ button, input, select, textarea {
   background: #e36c09;
 }
 
-
+.footer {
+      text-align: center;
+      color: #b69a63;
+      font-size: 1.01em;
+      margin-top: 43px;
+      letter-spacing: 1.3px;
+      width: 100vw;
+    }

@@ -55,24 +55,29 @@
       align-items: center;
       font-family: 'RIDIBatang', 'Noto Sans KR', sans-serif;
     }
-    .lion-group {
-      position: absolute;
-      top: 25px;         
-      right: 360px;       
-      z-index: 10;
-    }
-    .lion-group img {
-      height: 400px;      
-    }
-    @media (max-width: 900px) {
-      .lion-group {
-        top: 20px;
-        right: 12px;
-      }
-      .lion-group img {
-        height: 30px;
-      }
-    }
+.lion-group {
+  position: absolute;
+  top: 90px;
+  left: 1200px;
+  z-index: 10;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.lion-group img {
+  height: 150px;
+  max-width: 300px;
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .lion-group img {
+    height: 100px;
+    max-width: 80px;
+  }
+}
     .login-title {
       font-size: 2.2em;
       font-weight: bold;
