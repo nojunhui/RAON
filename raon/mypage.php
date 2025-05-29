@@ -77,7 +77,7 @@ while($row = $res->fetch_assoc()) $books[] = $row;
     <div class="mypage-menu">
         <div class="menu-box">
             <ul>
-                <li><a href="mypage/edit_profile.php">회원정보 수정</a></li>
+                <li><a href="edit_profile.php">회원정보 수정</a></li>
                 <li><a href="mypage/my_books.php">등록한 글 목록</a></li>
                 <li><a href="my_interest.php">관심 책 목록</a></li>
                 <li><a href="my_records.php">구매 / 판매 기록</a></li>
