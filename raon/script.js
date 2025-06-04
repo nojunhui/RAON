@@ -112,8 +112,8 @@ if (btnMajor && btnLiberal) {
   btnMajor.onclick = function () {
     if(btnMajor.classList.contains('active')) {
       btnMajor.classList.remove('active','selected');
-      majorFilter.style.display = 'none';
-      searchCategory.value = "";
+      if (majorFilter) majorFilter.style.display = 'none';
+      if (searchCategory) searchCategory.value = "";
       if (gradeSelect) gradeSelect.value = "";
       if (majorSelectBtn) { majorSelectBtn.textContent = "전체"; selectedMajorInput.value=""; }
       if (searchSubject) searchSubject.value = "";
@@ -121,16 +121,16 @@ if (btnMajor && btnLiberal) {
     } else {
       btnMajor.classList.add('active','selected');
       btnLiberal.classList.remove('active','selected');
-      majorFilter.style.display = '';
-      liberalFilter.style.display = 'none';
-      searchCategory.value = "전공";
+      if (majorFilter) majorFilter.style.display = '';
+      if (liberalFilter) liberalFilter.style.display = 'none';
+      if (searchCategory) searchCategory.value = "전공";
     }
   };
   btnLiberal.onclick = function () {
     if(btnLiberal.classList.contains('active')) {
       btnLiberal.classList.remove('active','selected');
-      liberalFilter.style.display = 'none';
-      searchCategory.value = "";
+      if (liberalFilter) liberalFilter.style.display = 'none';
+      if (searchCategory) searchCategory.value = "";
       if (searchSubject) searchSubject.value = "";
       if (liberalType) liberalType.value = "";
       if (gradeSelect) gradeSelect.value = "";
@@ -138,9 +138,9 @@ if (btnMajor && btnLiberal) {
     } else {
       btnLiberal.classList.add('active','selected');
       btnMajor.classList.remove('active','selected');
-      liberalFilter.style.display = '';
-      majorFilter.style.display = 'none';
-      searchCategory.value = "교양";
+      if (liberalFilter) liberalFilter.style.display = '';
+      if (majorFilter) majorFilter.style.display = 'none';
+      if (searchCategory) searchCategory.value = "교양";
     }
   };
 }
@@ -169,6 +169,9 @@ document.addEventListener('click', function(e) {
             if (data.success) {
               btn.classList.remove('liked');
               btn.querySelector('.interest-count').textContent = data.count;
+              // 관심목록 페이지면 행 삭제
+              var row = document.getElementById('interest-row-' + bookId);
+              if(row) row.parentNode.removeChild(row);
               alert('관심목록에서 제거하였습니다.');
             }
           });
@@ -191,48 +194,61 @@ document.addEventListener('click', function(e){
   }
 });
 
+// ---- 파일 업로드 버튼 ----
+const customFileBtn = document.getElementById('customFileBtn');
+if(customFileBtn){
+  customFileBtn.onclick = function() {
+    const bookImages = document.getElementById('bookImages');
+    if(bookImages) bookImages.click();
+  };
+}
 
-document.getElementById('customFileBtn').onclick = function() {
-  document.getElementById('bookImages').click();
-};
+// ---- 파일 업로드 목록 ----
+const bookImages = document.getElementById('bookImages');
+if(bookImages){
+  bookImages.onchange = function() {
+    const files = this.files;
+    const list = document.getElementById('selectedFilesList');
 
-document.getElementById('bookImages').onchange = function() {
-  const files = this.files;
-  const list = document.getElementById('selectedFilesList');
+    if (!files.length) {
+      if(list) list.textContent = "선택된 파일이 없습니다.";
+      return;
+    }
 
-  if (!files.length) {
-    list.textContent = "선택된 파일이 없습니다.";
-    return;
-  }
+    if (files.length > 5) {
+      alert("최대 5개까지만 선택할 수 있습니다.");
+      this.value = ""; // 선택 초기화
+      if(list) list.textContent = "선택된 파일이 없습니다.";
+      return;
+    }
 
-  if (files.length > 5) {
-    alert("최대 5개까지만 선택할 수 있습니다.");
-    this.value = ""; // 선택 초기화
-    list.textContent = "선택된 파일이 없습니다.";
-    return;
-  }
+    let names = Array.from(files).map(file => file.name);
+    if(list) list.textContent = names.join(', ');
+  };
+}
 
-  let names = Array.from(files).map(file => file.name);
-  list.textContent = names.join(', ');
-};
+// ---- 등록 폼 제출 유효성 ----
+const regForm = document.getElementById('regForm');
+if(regForm){
+  regForm.onsubmit = function(e) {
+    const bookImages = document.getElementById('bookImages');
+    if (bookImages && bookImages.files.length > 5) {
+      alert("최대 5개까지만 선택할 수 있습니다.");
+      e.preventDefault();
+      return false;
+    }
+    // 기타 유효성 검사 ...
+  };
+}
 
-// ⬇️ 폼 제출 시 5개 초과면 강제 중단!
-document.getElementById('regForm').onsubmit = function(e) {
-  const files = document.getElementById('bookImages').files;
-  if (files.length > 5) {
-    alert("최대 5개까지만 선택할 수 있습니다.");
-    e.preventDefault();
-    return false;
-  }
-  // 기타 유효성 검사 ...
-};
-
+// ---- 학생ID 입력란 플레이스홀더 ----
 const studentInput = document.getElementById('student_id');
-const oriPlaceholder = studentInput.placeholder;
-
-studentInput.addEventListener('focus', function() {
-  studentInput.placeholder = '';
-});
-studentInput.addEventListener('blur', function() {
-  if (!studentInput.value) studentInput.placeholder = oriPlaceholder;
-});
+if(studentInput){
+  const oriPlaceholder = studentInput.placeholder;
+  studentInput.addEventListener('focus', function() {
+    studentInput.placeholder = '';
+  });
+  studentInput.addEventListener('blur', function() {
+    if (!studentInput.value) studentInput.placeholder = oriPlaceholder;
+  });
+}

@@ -10,7 +10,7 @@ if (!$book_id) {
     exit;
 }
 
-// 책 정보 불러오기 (Users와 조인, 대소문자 일치)
+// 책 정보 불러오기 (Users와 조인)
 $q = $conn->query("SELECT B.*, U.name as seller_name, U.student_id as seller_id
                    FROM Books B
                    JOIN Users U ON B.seller_id = U.student_id
@@ -35,12 +35,12 @@ $category = $row['category'];
 $created_at = $row['created_at'];
 $detail = nl2br(htmlspecialchars($row['description']));
 $interest_count = $row['interest_count'];
+// 판매자 정보
+$seller_info = $conn->query("SELECT name, sell_count, buy_count FROM Users WHERE student_id='$seller_id'")->fetch_assoc();
 
 // 대표사진 + 추가이미지
 $images = [];
-// 대표사진(Books 테이블)
 if ($row['image_path']) $images[] = $row['image_path'];
-// 추가이미지(BooksImages 테이블)
 $res_img = $conn->query("SELECT image_path FROM BooksImages WHERE book_id = $book_id ORDER BY image_id ASC");
 while($img = $res_img->fetch_assoc()) {
     if ($img['image_path'] && $img['image_path'] != $row['image_path']) $images[] = $img['image_path'];
@@ -53,10 +53,9 @@ function isLiked($user_id, $book_id){
     $q = $c->query("SELECT 1 FROM Interests WHERE student_id='$user_id' AND book_id=$book_id");
     return $q && $q->num_rows > 0;
 }
-function isLogin() {
-    return isset($_SESSION['student_id']);
-}
+function isLogin() { return isset($_SESSION['student_id']); }
 ?>
+<?php include 'header.php'; ?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -84,61 +83,86 @@ function isLogin() {
     .detail-desc { background:#FFF8EC; border-radius:9px; padding:18px 17px; color:#6b5122; font-size:1.05em; margin-top:19px; }
     .detail-date { margin-top:12px; color:#b7a085; font-size:0.97em;}
     .detail-action-row { margin-top:21px; }
+    /* =============== 후기/다른글 추가 박스 =============== */
+    .info-section { max-width:740px; margin:40px auto 0 auto; }
+    .review-box, .other-books-box {
+      background:#FFF8EC; border-radius:9px; padding:18px 17px; margin-bottom:36px; color:#6b5122; box-shadow:0 2px 12px rgba(222,182,123,0.04);
+    }
+    .review-title, .other-books-title {
+      font-weight:bold; color:#ac831b; font-size:1.13em; margin-bottom:12px;
+      border-bottom: 1px solid #f2e4c5; padding-bottom:3px;
+    }
+    .review-item { border-bottom:1px solid #ebebeb; margin-bottom:10px; padding-bottom:8px;}
+    .review-user { font-weight:bold; color:#ac831b;}
+    .review-date { color:#b1a078; font-size:0.97em; margin-left:4px;}
+    .review-content { color:#62431d; font-size:1.03em; margin-top:2px; display:inline-block;}
+    /* ===== 판매자 다른글 ===== */
+    .other-books-list { display:flex; gap:18px; align-items:flex-end; min-height:210px; }
+    .other-book-thumb { width:162px; height:200px; border-radius:11px; box-shadow:0 1px 6px #e6d6bb; object-fit:cover; background:#f7f4e5; }
+    .other-books-arrow { background:none; border:none; color:#c6ae85; font-size:26px; cursor:pointer; margin:0 5px; }
+    /* ===== 판매완료하기 버튼 스타일 ===== */
+    .book-sold-btn {
+      background: #ff7e1b;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 1em;
+      padding: 8px 18px;
+      margin-left: 4px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+      vertical-align: middle;
+      box-shadow:0 1px 3px #ffe3ba3a;
+    }
+    .book-sold-btn:hover { background: #ff6000; }
+    @media (max-width:900px){
+      .detail-wrap,.info-section{padding:14px 2vw;}
+      .detail-row{flex-direction:column;gap:12px;}
+      .other-book-thumb{width:98px;height:120px;}
+    }
+
+    .search-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1.5px solid #a5753f;
+  border-radius: 12px 12px 12px 12px;
+  font-size: 1em;
+  padding: 10px 18px;
+  background: #fff;
+  height: 42px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.search-btn {
+  background: #ffcd99;
+  color: #fff;
+  border-radius: 12px 12px 12px 12px;
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 0 28px;
+  height: 42px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-left: 0;
+  outline: none;
+  transition: background 0.15s;
+}
   </style>
 </head>
 <body>
-<!-- ==== index.php와 동일한 상단바 + 필터, 검색, 버튼 ==== -->
-<div class="topnav">
-  <div class="logo" onclick="location.href='index.php'">RAON</div>
-  <div class="category-bar">
-    <button id="btn-major" class="category-btn">전공</button>
-    <button id="btn-liberal" class="category-btn">교양</button>
-  </div>
-  <form id="searchForm" class="search-bar" method="get" action="search.php" autocomplete="off">
-    <input type="hidden" name="category" id="searchCategory">
-    <div id="major-filter" class="filter-group" style="display:none;position:relative;">
-      <select id="gradeSelect" class="filter-sel">
-        <option value="">전체</option>
-        <option value="1">1학년</option>
-        <option value="2">2학년</option>
-        <option value="3">3학년</option>
-        <option value="4">4학년</option>
-        <option value="5">5학년</option>
-      </select>
-      <input type="hidden" id="searchGrade" name="grade">
-      <div id="majorSelectBtn" class="filter-sel" style="width:170px;position:relative;user-select:none;cursor:pointer;">전체</div>
-      <input type="hidden" id="selectedMajor" name="major">
-      <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:350px;top:36px;">
-        <div style="display:flex;">
-          <div id="collegeList" style="min-width:120px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
-          <div id="deptList" style="min-width:180px;padding:0 8px;"></div>
-        </div>
-      </div>
-    </div>
-    <div id="liberal-filter" class="filter-group" style="display:none;">
-      <select id="liberalType" class="filter-sel">
-        <option value="">전체</option>
-        <option value="호심교양">호심교양</option>
-        <option value="균형교양">균형교양</option>
-      </select>
-      <input type="hidden" id="searchSubject" name="subject">
-    </div>
-    <input type="text" name="search" class="search-input" placeholder="검색어를 입력해 주세요.">
-    <button type="submit" class="search-btn">검색</button>
-  </form>
-  <div class="auth-btns">
-    <?php if ($isLogin): ?>
-      <span class="username"><?=$seller_name?>님</span>
-      <a href="post_book.html"><button>교재 판매</button></a>
-      <a href="mypage.php"><button>마이페이지</button></a>
-      <a href="logout.php?goindex=1"><button>로그아웃</button></a>
-    <?php else: ?>
-      <a href="register.html"><button>회원가입</button></a>
-      <a href="login.html"><button>로그인</button></a>
-    <?php endif; ?>
-  </div>
-</div>
-<!-- ==== 상세 정보 ==== -->
 <div class="detail-wrap">
   <div class="detail-row">
     <div>
@@ -163,7 +187,11 @@ function isLogin() {
       <div class="detail-origin-price">정가: <?= $origin_price ?>원</div>
       <div class="detail-price">판매가 <?= $price ?>원</div>
       <div class="detail-publish-date">출판일: <?= $publish_date ?></div>
-      <div class="detail-seller"><i class="fa fa-user"></i> <?= $seller_name ?></div>
+      <div class="detail-seller">
+        <i class="fa fa-user"></i>
+        <?= $seller_name ?>
+        <span style="font-size:0.97em;color:#b19050;">(판매 <?= $seller_info['sell_count'] ?>, 구매 <?= $seller_info['buy_count'] ?>)</span>
+      </div>
       <div class="detail-interest">
         <button class="heart-btn<?= ($isLogin && isLiked($my_id, $book_id)) ? ' liked' : '' ?>" data-book-id="<?= $book_id ?>">
           <i class="fa fa-heart"></i>
@@ -175,7 +203,12 @@ function isLogin() {
         <?php if($isLogin && $my_id == $seller_id): ?>
           <a href="edit_book.php?id=<?= $book_id ?>"><button class="book-edit-btn">글 수정</button></a>
           <a href="delete_book.php?id=<?= $book_id ?>" onclick="return confirm('정말 삭제하시겠습니까?')"><button class="book-delete-btn">글 삭제</button></a>
-        <?php elseif($isLogin && $my_id != $seller_id): ?>
+          <?php if($status=='판매중'): ?>
+            <a href="finish_sale_select.php?book_id=<?= $book_id ?>"><button class="book-sold-btn">판매완료하기</button></a>
+          <?php else: ?>
+            <span class="book-sold-label" style="color:#c68a26;font-weight:bold;margin-left:6px;">[판매완료]</span>
+          <?php endif; ?>
+        <?php elseif($isLogin && $my_id != $seller_id && $status=='판매중'): ?>
           <a href="chat.php?book_id=<?= $book_id ?>&seller_id=<?= $seller_id ?>">
             <button class="chat-btn">채팅하기</button>
           </a>
@@ -185,6 +218,93 @@ function isLogin() {
   </div>
   <div class="detail-desc"><?= $detail ?></div>
 </div>
+
+<!-- 후기 박스 (하얀 박스) -->
+<div class="info-section">
+  <div class="review-box">
+    <div class="review-title"><i class="fa fa-comment-dots"></i> 후기</div>
+    <?php
+    $res = $conn->query("
+      SELECT R.*, U.name 
+      FROM Reviews R JOIN Users U ON R.buyer_id=U.student_id
+      WHERE R.book_id = $book_id
+      ORDER BY R.created_at DESC
+    ");
+    if ($res->num_rows) {
+      while($row = $res->fetch_assoc()){
+        echo "<div class='review-item'>";
+        echo "<span class='review-user'>".htmlspecialchars($row['name'])."</span>";
+        echo "<span class='review-date'>(".date('Y.m.d H:i',strtotime($row['created_at'])).")</span><br>";
+        echo "<span class='review-content'>".htmlspecialchars($row['content'])."</span>";
+        echo "</div>";
+      }
+    } else {
+      echo "<div style='color:#c6ae85;'>아직 후기가 없습니다.</div>";
+    }
+    ?>
+  </div>
+</div>
+
+<!-- 판매자의 다른 글 박스 (하얀 박스 + 화살표) -->
+<div class="info-section">
+  <div class="other-books-box">
+    <div class="other-books-title"><i class="fa fa-book"></i> 판매자의 다른 글</div>
+    <div class="other-books-list" id="otherBooksList">
+      <!-- 썸네일 JS로 출력 -->
+    </div>
+    <div style="text-align:center; margin-top:12px;">
+      <button class="other-books-arrow" id="prevArrow"><i class="fa fa-chevron-left"></i></button>
+      <button class="other-books-arrow" id="nextArrow"><i class="fa fa-chevron-right"></i></button>
+    </div>
+  </div>
+</div>
+
 <script src="script.js"></script>
+<script>
+// ===== 판매자의 다른 글 JS (최대 4개, 화살표 슬라이드) =====
+let books = [
+<?php
+$res = $conn->query("SELECT * FROM Books WHERE seller_id='$seller_id' AND book_id<>$book_id AND status='판매중' ORDER BY created_at DESC");
+$allBooks = [];
+while($b = $res->fetch_assoc()) $allBooks[] = $b;
+foreach($allBooks as $b) {
+    echo "{id:".$b['book_id'].",img:'".htmlspecialchars($b['image_path']?:'noimage.png')."'},";
+}
+?>
+];
+let currentPage = 0;
+const pageSize = 4;
+
+function renderOtherBooks() {
+  let list = document.getElementById('otherBooksList');
+  list.innerHTML = '';
+  if(books.length === 0) {
+    list.innerHTML = "<span style='color:#c6ae85;'>해당 판매자의 다른 판매글이 없습니다.</span>";
+    document.getElementById('prevArrow').style.display = "none";
+    document.getElementById('nextArrow').style.display = "none";
+    return;
+  }
+  let start = currentPage * pageSize;
+  let end = Math.min(start + pageSize, books.length);
+  for(let i=start;i<end;i++) {
+    let b = books[i];
+    let a = document.createElement('a');
+    a.href = 'book_detail.php?id='+b.id;
+    let img = document.createElement('img');
+    img.src = b.img;
+    img.className = 'other-book-thumb';
+    img.alt = '썸네일';
+    a.appendChild(img);
+    list.appendChild(a);
+  }
+  document.getElementById('prevArrow').disabled = currentPage === 0;
+  document.getElementById('nextArrow').disabled = end >= books.length;
+}
+if(document.getElementById('otherBooksList')) renderOtherBooks();
+document.getElementById('prevArrow').onclick = function(){ if(currentPage>0){ currentPage--; renderOtherBooks(); }};
+document.getElementById('nextArrow').onclick = function(){
+  if((currentPage+1)*pageSize < books.length){ currentPage++; renderOtherBooks(); }
+};
+</script>
 </body>
 </html>

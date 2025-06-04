@@ -3,6 +3,45 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 $isLogin = isset($_SESSION['student_id']);
 $name = $isLogin ? $_SESSION['name'] : null;
 ?>
+<!-- 헤더 스타일 바로 여기서 선언 (모든 페이지 공통적용 가능) -->
+<style>
+.search-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1.5px solid #a5753f;
+  border-radius: 12px 12px 12px 12px;
+  font-size: 1em;
+  padding: 10px 18px;
+  background: #fff;
+  height: 42px;
+  box-sizing: border-box;
+  outline: none;
+}
+.search-btn {
+  background: #ffcd99;
+  color: #fff;
+  border-radius: 12px 12px 12px 12px;
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 0 28px;
+  height: 42px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-left: 0;
+  outline: none;
+  transition: background 0.15s;
+}
+</style>
 
 <div class="topnav">
   <div class="logo" onclick="location.href='index.php'">RAON</div>
@@ -39,7 +78,7 @@ $name = $isLogin ? $_SESSION['name'] : null;
       </select>
       <input type="hidden" id="searchSubject" name="subject">
     </div>
-    <input type="text" name="search" class="search-input" placeholder="검색어를 입력해 주세요.">
+    <input type="text" class="search-input raon-input" placeholder="검색어를 입력해 주세요.">
     <button type="submit" class="search-btn">검색</button>
   </form>
   <div class="auth-btns">
@@ -66,4 +105,3 @@ $name = $isLogin ? $_SESSION['name'] : null;
     });
   }
 </script>
-
