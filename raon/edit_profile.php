@@ -7,6 +7,8 @@ if (!isset($_SESSION['student_id'])) {
 $student_id = $_SESSION['student_id'];
 $name = $_SESSION['name'];
 ?>
+  <?php include 'header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -27,45 +29,6 @@ $name = $_SESSION['name'];
       padding-top: 0;
       font-family: 'RIDIBatang', sans-serif;
     }
-
-      .search-bar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.search-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: 1.5px solid #a5753f;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1em;
-  padding: 10px 18px;
-  background: #fff;
-  height: 42px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.search-btn {
-  background: #ffcd99;
-  color: #fff;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1.1em;
-  font-weight: bold;
-  padding: 0 28px;
-  height: 42px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  margin-left: 0;
-  outline: none;
-  transition: background 0.15s;
-}
     .main-box { background: #fff; border-radius: 13px; max-width: 1000px; margin: 40px auto; padding: 34px 32px 38px 32px; min-height: 550px; }
     .mypage-menu { float: left; width: 200px; }
     .mypage-menu .menu-box { border: 1.5px solid #e7c195; border-radius: 11px; padding: 24px 20px; margin-bottom: 30px; }
@@ -121,11 +84,11 @@ $name = $_SESSION['name'];
       font-family: 'RIDIBatang', sans-serif;
     }
     .submit-btn:hover { background-color: #f9e0b8; }
-    .modal-overlay {
+     .modal-overlay {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0,0,0,0.36);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -133,48 +96,52 @@ $name = $_SESSION['name'];
       font-family: 'RIDIBatang', sans-serif;
     }
     .modal-content {
-      background-color: white;
-      padding: 40px 30px;
+      background: #fff;
+      padding: 40px 30px 35px 30px;
       border-radius: 12px;
       text-align: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-      max-width: 400px;
-      width: 90%;
-      font-family: 'RIDIBatang', sans-serif;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.20);
+      max-width: 420px;
+      width: 94vw;
+      position: relative;
     }
     .modal-content h2 {
-      margin-bottom: 15px;
-      font-size: 1.5em;
-      font-family: 'RIDIBatang', sans-serif;
+      margin-bottom: 20px;
+      font-size: 1.48em;
+      font-weight: bold;
     }
     .modal-content input[type="password"] {
-      width: 100%;
+      width: 80%;
       padding: 10px;
-      margin: 15px 0;
+      margin: 20px 0 16px 0;
       border: 1px solid #a5753f;
       border-radius: 6px;
-      font-family: 'RIDIBatang', sans-serif;
+      font-size: 1em;
     }
     .modal-content button {
-      padding: 8px 16px;
+      padding: 9px 24px;
       background-color: #f3c97b;
-      border: 1px solid #a5753f;
+      border: 1.3px solid #a5753f;
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.2s;
-      font-family: 'RIDIBatang', sans-serif;
+      transition: background-color 0.15s;
+      font-size: 1.05em;
     }
     .modal-content button:hover { background-color: #e3b95f; }
-    @media (max-width: 900px) {
-      .main-box { padding: 18px 5vw 22px 5vw; }
-      .mypage-menu { float: none; width: auto; margin-bottom: 22px; }
-      .mypage-main { margin-left: 0; }
+    .modal-x-btn {
+      position: absolute;
+      right: 19px; top: 18px;
+      background: none;
+      border: none;
+      font-size: 1.48em;
+      color: #ad854c;
+      cursor: pointer;
+      z-index: 1001;
     }
   </style>
 </head>
 <body>
-  <?php include 'header.php'; ?>
   <div class="main-box">
     <!-- 사이드 메뉴 -->
     <div class="mypage-menu">
@@ -218,11 +185,53 @@ $name = $_SESSION['name'];
   </div>
   <footer style="text-align:center; margin-top:32px; color:#C1A06C;">© RAON</footer>
 
-  <!-- 탈퇴 모달 스크립트 -->
-  <script>
+  
+  <!-- 🔵 회원탈퇴 팝업 모달(숨겨진 상태로 미리 삽입) -->
+  <div id="withdrawModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+      <button class="modal-x-btn" onclick="closeWithdrawModal()" title="닫기">&times;</button>
+      <h2>회원탈퇴</h2>
+      <div style="font-size:1.15em; font-weight:bold; margin-bottom:12px;">정말로 탈퇴하시겠습니까!?</div>
+      <div style="margin-bottom:12px; color:#8b6619; font-size:0.97em;">
+        계정을 삭제하시려면 현재 사용중인 비밀번호를 입력하세요.
+      </div>
+      <form id="withdrawForm" action="mypage/withdraw_process.php" method="post">
+        <input type="password" name="password" placeholder="비밀번호 입력" required>
+        <br>
+        <button type="submit">회원 탈퇴</button>
+      </form>
+    </div>
+  </div>
+
+   <script>
+    // 회원탈퇴 모달 열기
     function openWithdrawModal() {
       document.getElementById("withdrawModal").style.display = "flex";
+      // 비밀번호 input에 자동포커스
+      setTimeout(function(){
+        let pw = document.querySelector('#withdrawModal input[type="password"]');
+        if(pw) pw.focus();
+      }, 100);
     }
+    // 회원탈퇴 모달 닫기
+    function closeWithdrawModal() {
+      document.getElementById("withdrawModal").style.display = "none";
+      // 입력값도 지워주기(UX)
+      let pw = document.querySelector('#withdrawModal input[type="password"]');
+      if(pw) pw.value = '';
+    }
+    // x버튼 외에도 배경 클릭 시 닫기
+    document.getElementById("withdrawModal").addEventListener("click", function(e){
+      if(e.target === this) closeWithdrawModal();
+    });
+
+    // 회원탈퇴 a태그 이벤트
+    document.getElementById('withdrawBtn').onclick = function(e) {
+      e.preventDefault();
+      openWithdrawModal();
+      return false;
+    };
+    // 회원정보 수정 폼 새 비번 일치 확인
     document.getElementById('editForm').onsubmit = function(e) {
       var newpw = document.getElementById('new_password').value;
       var confirmpw = document.getElementById('confirm_password').value;

@@ -25,6 +25,7 @@ $sql = "SELECT book_id, title, status, created_at FROM Books WHERE seller_id='$s
 $res = $conn->query($sql);
 while($row = $res->fetch_assoc()) $books[] = $row;
 ?>
+<?php include 'header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="ko">
