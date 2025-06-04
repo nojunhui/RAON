@@ -1,0 +1,166 @@
+/* 등록한 글 목록 전용 스타일 */
+
+body {
+  background-color: #fff1cc;
+  font-family: 'SUIT', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  background-color: #fff8e7;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더 */
+header.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f7d794;
+  padding: 12px 20px;
+  border-radius: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+header.header h1 {
+  margin: 0;
+  font-weight: 900;
+  font-size: 1.8rem;
+  color: #444;
+  flex-shrink: 0;
+}
+
+header.header input[type="text"] {
+  flex-grow: 1;
+  max-width: 400px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+header.header button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  color: #444;
+  transition: background-color 0.3s ease;
+}
+
+header.header button:hover {
+  background-color: #eabf95;
+  color: white;
+}
+
+header .header-buttons {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 메인 영역 */
+.main {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+/* 사이드바 */
+aside.sidebar {
+  min-width: 200px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  height: fit-content;
+}
+
+aside.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  font-weight: 600;
+  color: #555;
+  font-size: 16px;
+}
+
+aside.sidebar ul li {
+  padding: 10px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+aside.sidebar ul li:hover,
+aside.sidebar ul li:focus {
+  background-color: #f7d794;
+  color: #fff;
+  outline: none;
+}
+
+/* 콘텐츠 영역 */
+section.content {
+  flex-grow: 1;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  min-width: 300px;
+}
+
+section.content h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: 700;
+  color: #444;
+  border-bottom: 2px solid #eabf95;
+  padding-bottom: 6px;
+}
+
+/* 등록한 글 목록 스타일 */
+section.content > ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 30px 0;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.4;
+}
+
+section.content > ul > li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eabf95;
+  margin-bottom: 0;
+}
+
+section.content > ul > li > a {
+  text-decoration: none;
+  color: #444;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+section.content > ul > li > a:hover {
+  color: #eabf95;
+  font-weight: bold;
+}
+
+section.content > ul > li > a:hover {
+  color: #eabf95;
+  font-weight: bold;
+}
