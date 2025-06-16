@@ -1,6 +1,10 @@
 CREATE DATABASE test;
 
 use test;
+
+show tables;
+select * from books;
+
 CREATE TABLE Users (
     student_id VARCHAR(8) PRIMARY KEY,   -- 8자 고정 학번(ID)
     name VARCHAR(50) NOT NULL,
@@ -34,6 +38,8 @@ CREATE TABLE books (
     FOREIGN KEY (seller_id) REFERENCES Users(student_id)
 );
 
+ALTER TABLE Books
+ADD COLUMN buyer_id CHAR(8) NULL;
 
 CREATE TABLE Interests (
     interest_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,7 +50,6 @@ CREATE TABLE Interests (
     FOREIGN KEY (book_id) REFERENCES Books(book_id),
     UNIQUE (student_id, book_id)   -- 같은 책에 중복 좋아요 방지
 );
-
 CREATE TABLE Purchases (
     purchase_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
@@ -53,7 +58,22 @@ CREATE TABLE Purchases (
     FOREIGN KEY (book_id) REFERENCES Books(book_id),
     FOREIGN KEY (buyer_id) REFERENCES Users(student_id)
 );
+select * from Purchases;
+DESC Purchases;
+SELECT * FROM Purchases WHERE buyer_id='20220123' ORDER BY purchased_at DESC;
+SELECT * FROM Purchases WHERE buyer_id='12345678';
+SELECT * FROM Purchases ORDER BY purchased_at DESC;
+DESC ChatMessages;
+ALTER TABLE ChatMessages ADD COLUMN is_read TINYINT(1) NOT NULL DEFAULT 0;
 
+
+SELECT B.*, P.purchased_at
+FROM Purchases P
+JOIN Books B ON P.book_id = B.book_id
+WHERE P.buyer_id = '12345678'
+ORDER BY P.purchased_at DESC;
+
+SELECT * FROM Books WHERE book_id = (12);
 
 CREATE TABLE BooksImages (
     image_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -61,7 +81,6 @@ CREATE TABLE BooksImages (
     image_path VARCHAR(255) NOT NULL,
     FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE ChatRooms (
     chatroom_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -96,3 +115,6 @@ CREATE TABLE Reviews (
     FOREIGN KEY (seller_id) REFERENCES Users(student_id),
     FOREIGN KEY (buyer_id) REFERENCES Users(student_id)
 );
+
+ALTER TABLE ChatMessages
+ADD COLUMN image_path VARCHAR(255) NULL;
