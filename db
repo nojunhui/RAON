@@ -1,0 +1,98 @@
+CREATE DATABASE test;
+
+use test;
+CREATE TABLE Users (
+    student_id VARCHAR(8) PRIMARY KEY,   -- 8자 고정 학번(ID)
+    name VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,   -- 암호화된 비밀번호
+    phone VARCHAR(20) NOT NULL,       -- 전화번호
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    sell_count INT DEFAULT 0,
+    buy_count INT DEFAULT 0,
+    interest_count INT DEFAULT 0
+);
+-- 교재 테이블
+CREATE TABLE books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    seller_id CHAR(8) NOT NULL,  -- 외래키
+    category ENUM('전공', '교양') NOT NULL,
+    subject ENUM('호심교양', '균형교양') NULL,
+    college VARCHAR(100) NULL,
+    grade INT NULL,
+    major VARCHAR(100) NULL,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(100),
+    publisher VARCHAR(100),
+    publish_date DATE,
+    original_price INT,
+    selling_price INT,
+    description TEXT,
+    image_path VARCHAR(255),
+    interest_count INT DEFAULT 0,
+    status ENUM('판매중', '판매완료') DEFAULT '판매중',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (seller_id) REFERENCES Users(student_id)
+);
+
+
+CREATE TABLE Interests (
+    interest_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id CHAR(8) NOT NULL,
+    book_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES Users(student_id),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    UNIQUE (student_id, book_id)   -- 같은 책에 중복 좋아요 방지
+);
+
+CREATE TABLE Purchases (
+    purchase_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    buyer_id CHAR(8) NOT NULL,
+    purchased_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (buyer_id) REFERENCES Users(student_id)
+);
+
+
+CREATE TABLE BooksImages (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    image_path VARCHAR(255) NOT NULL,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE ChatRooms (
+    chatroom_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    seller_id CHAR(8) NOT NULL,
+    buyer_id CHAR(8) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES Users(student_id),
+    FOREIGN KEY (buyer_id) REFERENCES Users(student_id),
+    UNIQUE (book_id, buyer_id)  -- 한 책에 대해 한 구매자와는 채팅방 1개만 허용
+);
+
+CREATE TABLE ChatMessages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    chatroom_id INT NOT NULL,
+    sender_id CHAR(8) NOT NULL,
+    message TEXT NOT NULL,
+    sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (chatroom_id) REFERENCES ChatRooms(chatroom_id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES Users(student_id)
+);
+
+CREATE TABLE Reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    seller_id CHAR(8) NOT NULL,
+    buyer_id CHAR(8) NOT NULL,
+    content VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES Users(student_id),
+    FOREIGN KEY (buyer_id) REFERENCES Users(student_id)
+);
