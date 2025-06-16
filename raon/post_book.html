@@ -188,6 +188,7 @@
           <div id="selectedFilesList"></div>
         </div>
         <div class="input-row" style="margin-top:10px;">
+          <button type="button" id="aiExtractBtn" class="pretty-file-btn" style="width:100%;">AI 작성 시작</button>
           <button type="submit" class="submit-btn">등록하기</button>
         </div>
     </form>
@@ -448,6 +449,57 @@ if(priceBtn){
   };
 }
 
+document.getElementById('aiExtractBtn').onclick = async function() {
+  if (fileList.length === 0) {
+    alert('책 사진을 먼저 첨부해주세요.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('image', fileList[0]);
+
+  try {
+    // 1단계: OCR 요청
+    const ocrRes = await fetch('extract_book_info.php', {
+      method: 'POST',
+      body: formData
+    });
+    const ocrData = await ocrRes.json();
+
+    if (!ocrData.title) {
+      alert("책 제목을 인식하지 못했습니다.");
+      return;
+    }
+
+    document.querySelector('input[name="title"]').value = ocrData.title || '';
+    document.querySelector('input[name="author"]').value = ocrData.author || '';
+
+    // 2단계: 알라딘 API 요청
+    const apiForm = new URLSearchParams();
+    apiForm.append('title', ocrData.title);
+    apiForm.append('author', ocrData.author);
+
+    const infoRes = await fetch('search_book_info.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: apiForm
+    });
+
+    const infoData = await infoRes.json();
+    if (infoData && !infoData.error) {
+    if (infoData.title) document.querySelector('input[name="title"]').value = infoData.title;
+    if (infoData.author) document.querySelector('input[name="author"]').value = infoData.author;
+    if (infoData.publisher) document.querySelector('input[name="publisher"]').value = infoData.publisher;
+    if (infoData.publish_date) document.querySelector('input[name="publish_date"]').value = infoData.publish_date;
+    if (infoData.original_price) document.querySelector('input[name="original_price"]').value = infoData.original_price;
+  } else {
+    alert("도서 정보를 찾을 수 없습니다.");
+  }
+
+  } catch (err) {
+    alert("오류 발생: " + err.message);
+  }
+};
 
 </script>
 </body>
