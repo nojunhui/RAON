@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>교재 등록 | RAON</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .post-box { max-width:540px; margin:40px auto; background:#fff; border-radius:15px; box-shadow:0 1px 8px rgba(0,0,0,0.08); padding:34px 35px 34px 35px;}
+        .post-title {font-size:1.29em;font-weight:bold;margin-bottom:25px;letter-spacing:2px;}
+        .post-btn-row {display:flex;gap:12px;margin-bottom:23px;}
+        .post-type-btn {
+            width: 90px;
+            height: 30px;
+            background: #fff;
+            color: #c87d2e;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.06em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background .15s;
+            border: 1.5px solid #ffc093;
+            margin-bottom: 0;
+        }
+        .post-type-btn.active, .post-type-btn.selected {
+            background: #FFC093 !important;
+            color: #fff;
+        }
+        .post-filter { display:flex; gap:10px; margin-bottom:16px;}
+        .input-row {margin-bottom:16px;}
+        .input-row label {display:block;font-size:1em;margin-bottom:7px;font-weight:bold;color:#333;}
+        .input-row input, .input-row textarea, .input-row select {width:100%;border-radius:7px;border:1px solid #ffc093;padding:8px;font-size:1.05em;}
+        .input-row textarea {resize:vertical;min-height:80px;}
+        .submit-btn {width:100%;margin-top:15px;height:44px;font-size:1.1em;font-weight:bold;background:#965426;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+
+        /* 파일 업로드 커스텀 */
+        .custom-file-wrap {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          border-radius: 9px;
+          padding: 12px 18px;
+          width: 100%;
+          max-width: 350px;
+          margin: 0 auto 2px auto;  /* ← 이 부분! */
+          justify-content: center;  /* ← 이 부분! */
+        }
+        .pretty-file-btn {
+          background: #ffc093;
+          color: #fff;
+          font-weight: bold;
+          border: none;
+          border-radius: 7px;
+          font-size: 1em;
+          padding: 8px 22px;
+          cursor: pointer;
+          box-shadow: 0 1px 5px 0 #f8e0c1a9;
+          transition: background 0.14s;
+        }
+        .pretty-file-btn:hover {
+          background: #562502;
+        }
+        .file-info {
+          color: #000000;
+          font-size: 1.02em;
+          font-weight: bold;
+          margin-left: 2px;
+          letter-spacing: 0.02em;
+        }
+        .input-row input[type="date"] {padding:6px;}
+        .topnav {
+            display: flex;
+            align-items: center;
+            background: #FFECC2;
+            padding: 16px 24px 8px 24px;
+            justify-content: space-between;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 2.2em;
+            color: #222;
+            margin-right: 36px;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+        .auth-btns { display: flex; align-items: center; gap: 7px;}
+        .auth-btns button { width:110px; height:40px; border-radius: 9px; background: #fff; border: 1px solid #ffc093; color:#c87d2e; font-weight: bold; font-size:1.05em; cursor:pointer;}
+        .username { font-weight: bold; color: #222; margin-right: 13px; font-size:1.04em; }
+        /* 드롭다운 스타일 */
+        #majorDropdown {display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:370px;top:32px;}
+        #collegeList { min-width:110px; border-right:1px solid #f0c6a7; padding:0 8px;}
+        #deptList { min-width:150px; padding:0 8px;}
+        .college-item, .dept-item {
+            padding: 6px 11px; font-size: 1.01em; cursor: pointer; border-radius: 5px;
+            margin-bottom: 2px; white-space: nowrap; transition: background 0.13s;
+        }
+        .college-item:hover, .dept-item:hover { background: #ffe4cc;}
+        .college-item:first-child { font-weight:bold; color:#c87d2e; }
+
+        
+    </style>
+</head>
+<body>
+<div class="topnav">
+    <div class="logo" onclick="location.href='index.php'">RAON</div>
+    <div class="auth-btns">
+        <span class="username" id="username"></span>
+        <a href="mypage.php"><button type="button">마이페이지</button></a>
+        <a href="logout.php?goindex=1"><button type="button">로그아웃</button></a>
+    </div>
+</div>
+
+<div class="post-box">
+    <div class="post-title">교재 등록</div>
+    <form action="post_book.php" method="post" enctype="multipart/form-data" id="regForm" autocomplete="off">
+        <div class="post-btn-row">
+            <button type="button" id="btnMajor" class="post-type-btn">전공</button>
+            <button type="button" id="btnLiberal" class="post-type-btn">교양</button>
+        </div>
+        <input type="hidden" name="category" id="categoryInput">
+        <div id="major-filter" class="post-filter" style="display:none;">
+            <select id="gradeSelect" name="grade" class="filter-sel" style="width:90px;">
+                <option value="">학년</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+                <option value="4">4학년</option>
+                <option value="5">5학년</option>
+            </select>
+            <div id="majorSelectBtn" class="filter-sel" style="width:200px;position:relative;user-select:none;cursor:pointer;">학과</div>
+            <input type="hidden" id="selectedMajor" name="major">
+            <div id="majorDropdown">
+                <div style="display:flex;">
+                  <div id="collegeList"></div>
+                  <div id="deptList"></div>
+                </div>
+            </div>
+        </div>
+        <div id="liberal-filter" class="post-filter" style="display:none;">
+            <select id="liberalType" name="subject" class="filter-sel">
+                <option value="">교양 종류</option>
+                <option value="호심교양">호심교양</option>
+                <option value="균형교양">균형교양</option>
+            </select>
+        </div>
+        <div class="input-row">
+            <label>책 제목</label>
+            <input type="text" name="title" required>
+        </div>
+        <div class="input-row">
+            <label>저자</label>
+            <input type="text" name="author" required>
+        </div>
+        <div class="input-row">
+            <label>출판사</label>
+            <input type="text" name="publisher" required>
+        </div>
+        <div class="input-row">
+            <label>출판일</label>
+            <input type="date" name="publish_date">
+        </div>
+        <div class="input-row">
+            <label>원가(정가)</label>
+            <input type="number" name="original_price" min="0">
+        </div>
+        <div class="input-row">
+          <label>판매 가격</label>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input type="number" name="selling_price" id="sellingPriceInput" min="0" required style="flex:1;">
+            <button type="button" id="priceSuggestBtn" class="pretty-file-btn" style="height:36px;padding:0 16px;font-size:1em;">판매가 추천받기</button>
+            <span id="priceSuggestionResult" style="margin-left:10px;color:#c87d2e;font-size:0.98em;font-weight:bold;"></span>
+          </div>
+        </div>
+
+        <div class="input-row">
+            <label>상세 설명</label>
+            <textarea name="description"></textarea>
+        </div>
+        <!-- 여기만 달라짐! -->
+        <div class="input-row">
+          <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
+          <div class="custom-file-wrap">
+            <div class="custom-file" style="margin-top:5px; gap: 10px">
+            <button type="button" id="customFileBtn" class="pretty-file-btn">파일 선택</button>
+            <span id="selectedFilesText" class="file-info">선택된 파일 없음</span>
+            <input type="file" id="bookImages" name="images[]" accept="image/*" multiple style="display:none;">
+          </div>
+          <div id="selectedFilesList"></div>
+        </div>
+        <div class="input-row" style="margin-top:10px;">
+          <button type="button" id="aiExtractBtn" class="pretty-file-btn" style="width:100%;">AI 작성 시작</button>
+          <button type="submit" class="submit-btn">등록하기</button>
+        </div>
+    </form>
+</div>
+
+<script>
+window.onload = function() {
+    const name = sessionStorage.getItem('name');
+    if(name) document.getElementById('username').textContent = name + '님';
+};
+
+// 전공/교양 토글 동작
+const btnMajor = document.getElementById('btnMajor');
+const btnLiberal = document.getElementById('btnLiberal');
+const majorFilter = document.getElementById('major-filter');
+const liberalFilter = document.getElementById('liberal-filter');
+const categoryInput = document.getElementById('categoryInput');
+btnMajor.onclick = function() {
+    btnMajor.classList.add('active');
+    btnLiberal.classList.remove('active');
+    majorFilter.style.display = '';
+    liberalFilter.style.display = 'none';
+    categoryInput.value = '전공';
+};
+btnLiberal.onclick = function() {
+    btnLiberal.classList.add('active');
+    btnMajor.classList.remove('active');
+    liberalFilter.style.display = '';
+    majorFilter.style.display = 'none';
+    categoryInput.value = '교양';
+};
+btnMajor.click();
+
+// 학년/학과 2단 드롭다운
+const departmentsByCollege = {
+  "보건복지대학": [
+    "간호학과",
+    "작업치료학과",
+    "사회복지학부",
+    "언어치료학과",
+    "식품영양학과",
+    "보건행정학부",
+    "응급구조학과",
+    "건강기능식품학과",
+    "반려동물보건산업학과"
+  ],
+  "문화산업대학": [
+    "스포츠과학부",
+    "시각영상디자인학과",
+    "산업디자인학과",
+    "인테리어디자인학과",
+    "패션주얼리디자인학과",
+    "패션ㆍ주얼리디자인학부",
+    "뷰티미용학과",
+    "사진영상학과",
+    "문예창작과",
+    "호텔관광경영학부",
+    "항공서비스학과",
+    "호텔조리제과제빵학과"
+  ],
+  "인문사회과학대학": [
+    "유아교육과",
+    "청소년상담ㆍ평생교육학과",
+    "아동학과",
+    "한국어교육과",
+    "심리학과",
+    "경찰행정학과",
+    "소방행정학과",
+    "사이버보안경찰학과",
+    "문헌정보학과",
+    "경영학과",
+    "회계세무학과",
+    "무역유통학과",
+    "도시·부동산학과",
+    "국방학과"
+  ],
+  "공과대학": [
+    "건축학부",
+    "건축공학과",
+    "컴퓨터공학과",
+    "AI소프트웨어학과",
+    "전기공학과",
+    "토목공학과",
+    "기계자동차공학부",
+    "국방기술학부",
+    "AI자동차학과",
+    "융합기계공학과",
+    "기계자동차공학부(계약)"
+  ]
+};
+const majorSelectBtn = document.getElementById('majorSelectBtn');
+const majorDropdown = document.getElementById('majorDropdown');
+const collegeList = document.getElementById('collegeList');
+const deptList = document.getElementById('deptList');
+const selectedMajorInput = document.getElementById('selectedMajor');
+function setMajor(val, txt) {
+  selectedMajorInput.value = val;
+  majorSelectBtn.textContent = txt;
+  majorDropdown.style.display = "none";
+}
+if (collegeList && deptList && selectedMajorInput && majorSelectBtn) {
+  collegeList.innerHTML = '';
+  let allItem = document.createElement('div');
+  allItem.textContent = "전체";
+  allItem.className = "college-item";
+  allItem.style.cursor = "pointer";
+  allItem.onclick = function(e){
+    setMajor("", "전체");
+    e.stopPropagation();
+  };
+  collegeList.appendChild(allItem);
+
+  Object.keys(departmentsByCollege).forEach(college => {
+    let cItem = document.createElement('div');
+    cItem.textContent = college;
+    cItem.className = "college-item";
+    cItem.style.cursor = "pointer";
+    cItem.onmouseenter = function() {
+      deptList.innerHTML = "";
+      let allDept = document.createElement('div');
+      allDept.textContent = "전체";
+      allDept.className = "dept-item";
+      allDept.style.cursor = "pointer";
+      allDept.onclick = function(e){
+        setMajor(college + " 전체", college + " 전체");
+        e.stopPropagation();
+      };
+      deptList.appendChild(allDept);
+      departmentsByCollege[college].forEach(dept => {
+        let dItem = document.createElement('div');
+        dItem.textContent = dept;
+        dItem.className = "dept-item";
+        dItem.style.cursor = "pointer";
+        dItem.onclick = function(e){
+          setMajor(dept, dept);
+          e.stopPropagation();
+        };
+        deptList.appendChild(dItem);
+      });
+    };
+    collegeList.appendChild(cItem);
+  });
+}
+if (majorSelectBtn && majorDropdown) {
+  majorSelectBtn.onclick = function(e) {
+    majorDropdown.style.display = majorDropdown.style.display === "block" ? "none" : "block";
+    e.stopPropagation();
+  };
+  document.body.addEventListener('click', function() {
+    if(majorDropdown) majorDropdown.style.display = 'none';
+  });
+}
+
+//////////////////////////////
+// 파일 업로드 UI & 파일명 표시
+//////////////////////////////
+let fileList = [];
+const bookImages = document.getElementById('bookImages');
+const customFileBtn = document.getElementById('customFileBtn');
+const selectedFilesText = document.getElementById('selectedFilesText');
+const selectedFilesList = document.getElementById('selectedFilesList');
+
+// 파일 선택 버튼 클릭시 실제 input 클릭
+customFileBtn.onclick = () => bookImages.click();
+
+// 파일 선택/추가시
+bookImages.onchange = function(e) {
+  const newFiles = Array.from(bookImages.files);
+  // 중복 추가 방지 (name, size, lastModified로 판별)
+  for (let f of newFiles) {
+    // 최대 5장 제한
+    if (fileList.length >= 5) break;
+    if (!fileList.some(x => x.name === f.name && x.size === f.size && x.lastModified === f.lastModified)) {
+      fileList.push(f);
+    }
+  }
+  if (fileList.length > 5) fileList = fileList.slice(0, 5);
+
+  // 파일 input value를 초기화해서 다시 선택 가능하게 함
+  bookImages.value = "";
+
+  showFiles();
+}
+
+// 파일 리스트 렌더링
+function showFiles() {
+  selectedFilesList.innerHTML = '';
+  if (fileList.length === 0) {
+    selectedFilesText.textContent = "선택된 파일 없음";
+    return;
+  }
+  let names = fileList.map(f => f.name);
+  selectedFilesText.textContent = names.join(', ');
+
+  fileList.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.style.marginBottom = '7px';
+    div.innerHTML =
+      `<b>${i === 0 ? '[대표]' : ''}</b> ${f.name} (${(f.size / 1024).toFixed(1)}KB)
+       <button type="button" onclick="removeFile(${i})" style="margin-left:8px;">삭제</button>`;
+    selectedFilesList.appendChild(div);
+  });
+}
+window.removeFile = function(idx) {
+  fileList.splice(idx, 1);
+  showFiles();
+}
+
+// 폼 제출 시 커스텀 fileList를 input.files에 반영
+document.getElementById('regForm').onsubmit = function(e){
+  if (fileList.length === 0) {
+    alert('사진을 1장 이상 선택하세요.');
+    e.preventDefault();
+    return false;
+  }
+  if (fileList.length > 5) {
+    alert('사진은 최대 5장까지 업로드 가능합니다.');
+    e.preventDefault();
+    return false;
+  }
+  // DataTransfer로 input에 반영
+  const dt = new DataTransfer();
+  fileList.forEach(f => dt.items.add(f));
+  bookImages.files = dt.files;
+  // 폼 동기 제출(이 부분에 e.preventDefault() 쓰지 말 것!)
+  // 그냥 끝내면 제출됨
+}
+// ======================= 판매가 추천 기능 ========================
+const priceBtn = document.getElementById('priceSuggestBtn');
+if(priceBtn){
+  priceBtn.onclick = function() {
+    const title = document.querySelector('input[name="title"]').value.trim();
+    const author = document.querySelector('input[name="author"]').value.trim();
+    const resultSpan = document.getElementById('priceSuggestionResult');
+    resultSpan.textContent = "조회중...";
+
+    if(!title || !author) {
+      resultSpan.textContent = "책 제목과 저자를 입력하세요.";
+      return;
+    }
+
+    // AJAX 요청
+    fetch('get_price_suggestion.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: 'title=' + encodeURIComponent(title) + '&author=' + encodeURIComponent(author)
+    })
+    .then(r=>r.json())
+    .then(data => {
+      if(data && data.avg_price){
+        resultSpan.textContent = `(평균가: ${data.avg_price.toLocaleString()}원)`;
+      } else {
+        resultSpan.textContent = "(등록되어 있는 동일한 책이 없습니다)";
+      }
+    }).catch(()=>{
+      resultSpan.textContent = "오류 발생";
+    });
+  };
+}
+
+document.getElementById('aiExtractBtn').onclick = async function() {
+  if (fileList.length === 0) {
+    alert('책 사진을 먼저 첨부해주세요.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('image', fileList[0]);
+
+  try {
+    // 1단계: OCR 요청
+    const ocrRes = await fetch('extract_book_info.php', {
+      method: 'POST',
+      body: formData
+    });
+    const ocrData = await ocrRes.json();
+
+    if (!ocrData.title) {
+      alert("책 제목을 인식하지 못했습니다.");
+      return;
+    }
+
+    document.querySelector('input[name="title"]').value = ocrData.title || '';
+    document.querySelector('input[name="author"]').value = ocrData.author || '';
+
+    // 2단계: 알라딘 API 요청
+    const apiForm = new URLSearchParams();
+    apiForm.append('title', ocrData.title);
+    apiForm.append('author', ocrData.author);
+
+    const infoRes = await fetch('search_book_info.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: apiForm
+    });
+
+    const infoData = await infoRes.json();
+    if (infoData && !infoData.error) {
+    if (infoData.title) document.querySelector('input[name="title"]').value = infoData.title;
+    if (infoData.author) document.querySelector('input[name="author"]').value = infoData.author;
+    if (infoData.publisher) document.querySelector('input[name="publisher"]').value = infoData.publisher;
+    if (infoData.publish_date) document.querySelector('input[name="publish_date"]').value = infoData.publish_date;
+    if (infoData.original_price) document.querySelector('input[name="original_price"]').value = infoData.original_price;
+  } else {
+    alert("도서 정보를 찾을 수 없습니다.");
+  }
+
+  } catch (err) {
+    alert("오류 발생: " + err.message);
+  }
+};
+
+</script>
+</body>
+</html>
