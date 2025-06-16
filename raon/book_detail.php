@@ -21,6 +21,37 @@ if (!$row) {
     exit;
 }
 
+// 추천 책 쿼리는 반드시 $row 초기화(책정보 SELECT) 후에!
+$current_title = $row['title'];
+$current_author = $row['author'];
+$current_price = intval($row['selling_price']);
+$current_book_id = $book_id;
+
+// 대표이미지만 서브쿼리로 한 장씩!
+$rec_sql = "
+SELECT B.book_id, B.title, B.selling_price,
+  COALESCE(
+    (SELECT image_path FROM BooksImages WHERE book_id = B.book_id ORDER BY image_id ASC LIMIT 1),
+    B.image_path, ''
+  ) AS image_path
+FROM Books B
+WHERE B.title = ? AND B.author = ?
+  AND B.selling_price <= ?
+  AND B.book_id != ?
+  AND B.status = '판매중'
+ORDER BY B.selling_price ASC, B.book_id ASC
+LIMIT 10
+";
+$stmt = $conn->prepare($rec_sql);
+$stmt->bind_param("ssii", $current_title, $current_author, $current_price, $current_book_id);
+$stmt->execute();
+$rec_res = $stmt->get_result();
+$recommend_books = [];
+while ($row2 = $rec_res->fetch_assoc()) $recommend_books[] = $row2;
+$stmt->close();
+
+// (이 아래는 기존 상세보기 코드대로 쓰면 됨)
+
 $title = htmlspecialchars($row['title']);
 $author = htmlspecialchars($row['author']);
 $publisher = htmlspecialchars($row['publisher']);
@@ -54,6 +85,8 @@ function isLiked($user_id, $book_id){
     return $q && $q->num_rows > 0;
 }
 function isLogin() { return isset($_SESSION['student_id']); }
+
+
 ?>
 <?php include 'header.php'; ?>
 <!DOCTYPE html>
@@ -65,10 +98,57 @@ function isLogin() { return isset($_SESSION['student_id']); }
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
     .detail-wrap { max-width:740px; margin:40px auto 60px auto; background:#fff; border-radius:17px; box-shadow:0 2px 15px rgba(222,182,123,0.07); padding:36px 38px; }
-    .detail-row { display: flex; gap: 32px; }
-    .detail-thumb { width:170px; height:210px; object-fit:cover; border-radius:8px; border:1px solid #ffc093;}
-    .thumb-list { display:flex; gap:7px; margin-top:11px; }
-    .thumb-list img { width:40px; height:46px; border-radius:5px; border:1px solid #eee; object-fit:cover; cursor:pointer;}
+.detail-thumb {
+  width: 270px;      /* 기존 170px → 270px, 더 키우고 싶으면 320px도 가능 */
+  height: 350px;     /* 기존 210px → 350px, 380px까지도 가능 */
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #ffc093;
+  background: #f7f4e5;
+  cursor: pointer;   /* 클릭 가능해 보이게 */
+  transition: box-shadow 0.18s;
+}
+
+.detail-thumb:hover {
+  box-shadow: 0 4px 32px rgba(230,170,90,0.15);
+}
+
+.thumb-list {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  overflow-x: auto;
+  max-width: 320px;
+  padding-bottom: 4px;
+}
+.thumb-list::-webkit-scrollbar { height: 7px; background: #ffeec4;}
+.thumb-list::-webkit-scrollbar-thumb { background: #ffd699; border-radius: 7px;}
+
+.thumb-list img {
+  width: 62px;      /* 기존 40px → 62px */
+  height: 78px;     /* 기존 46px → 78px */
+  border-radius: 7px;
+  border: 1.5px solid #ffd7b3;
+  object-fit: cover;
+  cursor: pointer;
+  background: #f7f4e5;
+  transition: box-shadow 0.18s, border 0.15s;
+}
+.thumb-list img:hover {
+  border: 2px solid #ffb964;
+  box-shadow: 0 2px 10px #ffe4bc5a;
+}
+.detail-row {
+  display: flex;
+  gap: 54px;
+  flex-direction: row;  /* ★ 반드시 row! */
+}
+
+@media (max-width:900px){
+  .detail-row{ flex-direction:column; gap:12px;}
+}
+
+
     .detail-info { flex:1; min-width:0; }
     .detail-title-row { display:flex; align-items:center; gap:11px; margin-bottom:7px;}
     .detail-title { font-size:1.28em; font-weight:bold; color:#222;}
@@ -82,7 +162,14 @@ function isLogin() { return isset($_SESSION['student_id']); }
     .heart-btn { font-size:21px;}
     .detail-desc { background:#FFF8EC; border-radius:9px; padding:18px 17px; color:#6b5122; font-size:1.05em; margin-top:19px; }
     .detail-date { margin-top:12px; color:#b7a085; font-size:0.97em;}
-    .detail-action-row { margin-top:21px; }
+
+.detail-action-row { 
+  margin-top: 21px;
+  display: flex; 
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
     /* =============== 후기/다른글 추가 박스 =============== */
     .info-section { max-width:740px; margin:40px auto 0 auto; }
     .review-box, .other-books-box {
@@ -107,7 +194,7 @@ function isLogin() { return isset($_SESSION['student_id']); }
       border: none;
       border-radius: 7px;
       font-size: 1em;
-      padding: 8px 18px;
+      padding: 8px 15px;
       margin-left: 4px;
       font-family: inherit;
       cursor: pointer;
@@ -121,60 +208,176 @@ function isLogin() { return isset($_SESSION['student_id']); }
       .detail-row{flex-direction:column;gap:12px;}
       .other-book-thumb{width:98px;height:120px;}
     }
-
-    .search-bar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+    @media (min-width:900px) {
+  #recommend-books-float {
+    position: absolute;
+    right: 38px;
+    top: 38px;
+    width: 310px;
+    z-index: 3;
+    background: none;
+  }
+}
+@media (max-width:899px) {
+  #recommend-books-float { display: none; }
+}
+#recommend-slider {
+  background:#fff8ea; border-radius:15px; box-shadow:0 1px 8px #0001; 
+  padding:18px 15px; display:flex; align-items:center; justify-content:center; min-height:170px;
 }
 
-.search-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: 1.5px solid #a5753f;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1em;
-  padding: 10px 18px;
-  background: #fff;
-  height: 42px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.search-btn {
-  background: #ffcd99;
-  color: #fff;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1.1em;
-  font-weight: bold;
-  padding: 0 28px;
-  height: 42px;
-  white-space: nowrap;
+.rec-arrow-btn {
+  width: 38px;
+  height: 38px;
+  border: 2.2px solid #d8c18b;
+  border-radius: 50%;
+  background: #fff8ec;
+  color: #ba9650;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  margin-left: 0;
+  font-size: 1.2em;
+  margin: 0 14px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.15s, border 0.17s;
   outline: none;
-  transition: background 0.15s;
+  box-shadow: 0 2px 6px #e7d3a430;
 }
+.rec-arrow-btn:hover, .rec-arrow-btn:focus {
+  background: #ffe3bc;
+  color: #e59019;
+  border-color: #e59019;
+}
+.rec-arrow-btn:active {
+  background: #ffc676;
+  color: #b17e1f;
+  border-color: #d5aa54;
+}
+.rec-arrow-btn i {
+  font-size: 1.23em;
+  pointer-events: none;
+}
+#rec-book-view { position:relative; min-height:150px; }
+#rec-book-view .rec-slide {
+  display: inline-block;
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  width: 100%;
+  transition: transform 0.4s cubic-bezier(.43,.87,.61,1.24), opacity 0.36s;
+  opacity: 1;
+  z-index: 2;
+}
+#rec-book-view .slide-out-left   { transform: translateX(-100%); opacity: 0; z-index: 2;}
+#rec-book-view .slide-out-right  { transform: translateX(100%); opacity: 0; z-index: 2;}
+#rec-book-view .slide-in-left    { transform: translateX(-100%); opacity: 1; z-index: 3; }
+#rec-book-view .slide-in-right   { transform: translateX(100%); opacity: 1; z-index: 3; }
+#rec-book-view .active           { transform: translateX(0); opacity: 1; z-index: 4; }
+
   </style>
 </head>
 <body>
 <div class="detail-wrap">
-  <div class="detail-row">
-    <div>
-      <img src="<?= htmlspecialchars($images[0]) ?>" id="mainImage" class="detail-thumb" alt="대표사진">
-      <?php if(count($images)>1): ?>
+  <?php if (count($recommend_books) > 0): ?>
+<div id="recommend-books-float">
+  <div style="font-weight:bold; color:#ad6d20; font-size:1.07em; margin-top:90px; margin-bottom:8px;">
+    📖 비슷하거나 더 저렴한 가격의 같은 책!
+  </div>
+<div id="recommend-slider" style="position: relative; min-height: 170px;">
+  <button type="button" id="rec-prev" class="rec-arrow-btn">
+    <i class="fa fa-chevron-left"></i>
+  </button>
+  <div id="rec-book-view" style="flex:1; text-align:center; position:relative; min-height: 150px;"></div>
+  <button type="button" id="rec-next" class="rec-arrow-btn">
+    <i class="fa fa-chevron-right"></i>
+  </button>
+</div>
+
+</div>
+<script>
+const recBooks = <?=json_encode($recommend_books)?>;
+let recIdx = 0, animating = false;
+
+function showRecBook(direction = 0) {
+  const view = document.getElementById('rec-book-view');
+  if (animating) return;
+
+  const book = recBooks[recIdx];
+  const newCard = document.createElement('div');
+  newCard.className = 'rec-slide';
+
+  newCard.innerHTML =
+    `<a href="book_detail.php?id=${book.book_id}" style="text-decoration:none;">
+      <img src="${book.image_path ? book.image_path : '/noimage.png'}" alt="책" style="max-width:86px; max-height:128px; border-radius:8px; box-shadow:0 1px 7px #0001;"><br>
+      <span style="color:#a4571d; font-weight:bold; font-size:1.05em;">${Number(book.selling_price).toLocaleString()}원</span>
+    </a>`;
+
+  if (!view.firstChild || direction === 0) {
+    // 첫 진입 또는 직접 갱신
+    newCard.classList.add('active');
+    view.innerHTML = '';
+    view.appendChild(newCard);
+    return;
+  }
+
+  animating = true;
+  const oldCard = view.querySelector('.rec-slide');
+  // 새 카드는 방향에 맞게 "밖"에 위치 (in)
+  if (direction === 1) {
+    newCard.classList.add('slide-in-right');
+  } else {
+    newCard.classList.add('slide-in-left');
+  }
+  view.appendChild(newCard);
+
+  // 애니메이션 트리거
+  setTimeout(() => {
+    // 1. 새 카드를 0으로 이동 (슬라이드 in)
+    newCard.classList.add('active');
+    newCard.classList.remove(direction === 1 ? 'slide-in-right' : 'slide-in-left');
+    // 2. 기존 카드를 밖으로 이동 (슬라이드 out)
+    if (direction === 1) {
+      oldCard.classList.add('slide-out-left');
+    } else {
+      oldCard.classList.add('slide-out-right');
+    }
+  }, 16); // 1프레임 뒤(16ms) 실행이 핵심!
+
+  // 애니메이션 끝난 후 기존 카드 삭제
+  setTimeout(() => {
+    if (oldCard && oldCard.parentNode) oldCard.parentNode.removeChild(oldCard);
+    animating = false;
+  }, 420); // CSS와 맞춰서 (transition 0.4s)
+}
+
+document.getElementById('rec-prev').onclick = () => {
+  if (animating) return;
+  recIdx = (recIdx - 1 + recBooks.length) % recBooks.length;
+  showRecBook(-1);
+};
+document.getElementById('rec-next').onclick = () => {
+  if (animating) return;
+  recIdx = (recIdx + 1) % recBooks.length;
+  showRecBook(1);
+};
+showRecBook(0);
+
+</script>
+<?php endif; ?>
+
+<div class="detail-row">
+  <!-- 왼쪽: 대표사진+썸네일 -->
+  <div style="max-width:320px; min-width:230px; flex-shrink:0;">
+    <img src="<?= htmlspecialchars($images[0]) ?>" id="mainImage" class="detail-thumb" alt="대표사진">
+    <?php if(count($images)>1): ?>
       <div class="thumb-list">
-        <?php foreach($images as $img): ?>
-          <img src="<?= htmlspecialchars($img) ?>" onclick="document.getElementById('mainImage').src='<?= htmlspecialchars($img) ?>'">
+        <?php foreach($images as $img): if (!$img) continue; ?>
+          <img src="<?= htmlspecialchars($img) ?>" onclick="document.getElementById('mainImage').src='<?= htmlspecialchars($img) ?>'" alt="추가사진">
         <?php endforeach; ?>
       </div>
-      <?php endif; ?>
-    </div>
+    <?php endif; ?>
+  </div>
+
+
     <div class="detail-info">
       <div class="detail-title-row">
         <div class="detail-title"><?= $title ?></div>
@@ -201,7 +404,7 @@ function isLogin() { return isset($_SESSION['student_id']); }
       <div class="detail-date">등록일: <?= $created_at ?></div>
       <div class="detail-action-row">
         <?php if($isLogin && $my_id == $seller_id): ?>
-          <a href="edit_book.php?id=<?= $book_id ?>"><button class="book-edit-btn">글 수정</button></a>
+          <a href="edit_book.php?book_id=<?= $book_id ?>"><button class="book-edit-btn">글 수정</button></a>
           <a href="delete_book.php?id=<?= $book_id ?>" onclick="return confirm('정말 삭제하시겠습니까?')"><button class="book-delete-btn">글 삭제</button></a>
           <?php if($status=='판매중'): ?>
             <a href="finish_sale_select.php?book_id=<?= $book_id ?>"><button class="book-sold-btn">판매완료하기</button></a>

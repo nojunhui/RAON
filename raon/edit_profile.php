@@ -7,7 +7,7 @@ if (!isset($_SESSION['student_id'])) {
 $student_id = $_SESSION['student_id'];
 $name = $_SESSION['name'];
 ?>
-  <?php include 'header.php'; ?>
+<?php include 'header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -145,7 +145,7 @@ $name = $_SESSION['name'];
   <div class="main-box">
     <!-- 사이드 메뉴 -->
     <div class="mypage-menu">
-      <div class="menu-box">
+      <div class="menu-box">  
         <ul>
           <li><b>회원정보 수정</b></li>
           <li><a href="my_books.php">등록한 글 목록</a></li>

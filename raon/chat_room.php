@@ -1,6 +1,3 @@
-
-
-
 <?php
 session_start();
 if (!isset($_SESSION['student_id'])) { header("Location: login.html"); exit; }
@@ -10,13 +7,21 @@ $chatroom_id = intval($_GET['chatroom_id'] ?? 0);
 if (!$chatroom_id) { echo "잘못된 접근입니다."; exit; }
 
 $conn = new mysqli("localhost", "root", "1234", "test");
-$conn->query("UPDATE ChatMessages 
-              SET is_read=1 
-              WHERE chatroom_id=$chatroom_id 
-                AND sender_id != '$student_id' 
-                AND is_read=0");
 
-// 채팅방 정보 (상대방 이름, 책 제목, 책 status)
+// (1) 이 채팅방의 마지막 메시지 id 구하기
+$res = $conn->query("SELECT MAX(message_id) AS max_id FROM ChatMessages WHERE chatroom_id=$chatroom_id");
+$max_id = (int)($res->fetch_assoc()['max_id'] ?? 0);
+
+// (2) 내 역할(판매자/구매자) 판별해서 last_read_message_id 갱신
+$res2 = $conn->query("SELECT seller_id, buyer_id FROM ChatRooms WHERE chatroom_id=$chatroom_id");
+$row = $res2->fetch_assoc();
+if ($row['seller_id'] == $student_id) {
+  $conn->query("UPDATE ChatRooms SET last_read_message_id_seller = $max_id WHERE chatroom_id=$chatroom_id");
+} else if ($row['buyer_id'] == $student_id) {
+  $conn->query("UPDATE ChatRooms SET last_read_message_id_buyer = $max_id WHERE chatroom_id=$chatroom_id");
+}
+
+// ====================== 아래 기존 코드 이어서 ======================
 $room_sql = "SELECT CR.*, B.title, B.image_path, B.status, B.book_id,
     S.name as seller_name, U.name as buyer_name
  FROM ChatRooms CR
@@ -39,6 +44,7 @@ if ($room['status']=='판매완료' && $isBuyer) {
     $canWriteReview = !$chk->fetch_row();
 }
 ?>
+
 <?php include 'header.php'; ?>
 <!DOCTYPE html>
 <html lang="ko">

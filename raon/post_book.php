@@ -68,16 +68,10 @@ if ($stmt->execute()) {
     }
     $img_stmt->close();
   }
-  // 대표사진/첨부파일 미리보기 출력
-  echo "등록 성공! <a href='index.php'>메인으로</a><br><br>";
-  echo "<b>책 대표사진 미리보기:</b><br>";
-  if ($main_image) echo "<img src='$main_image' style='max-width:150px; max-height:200px; border:1px solid #ccc;'><br>";
-  if (count($image_paths) > 1) {
-      echo "<b>첨부된 모든 이미지:</b><br>";
-      foreach ($image_paths as $img_path) {
-        echo "<img src='$img_path' style='max-width:90px; max-height:120px; border:1px solid #eee; margin:2px;'>";
-      }
-  }
+  echo "<script>
+        alert('등록을 완료하였습니다.');
+        window.location.href = 'index.php';
+    </script>";
 } else {
   echo "등록 실패: ".$conn->error;
 }

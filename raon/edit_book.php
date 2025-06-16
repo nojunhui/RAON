@@ -1,10 +1,29 @@
+<?php
+session_start();
+if (!isset($_SESSION['student_id'])) {
+    header("Location: login.html"); exit;
+}
+$student_id = $_SESSION['student_id'];
+$book_id = intval($_GET['book_id'] ?? 0);
+$conn = new mysqli("localhost", "root", "1234", "test");
+
+$res = $conn->query("SELECT * FROM books WHERE book_id=$book_id AND seller_id='$student_id'");
+$book = $res->fetch_assoc();
+if (!$book) { exit("잘못된 접근입니다."); }
+
+// 기존 이미지들 불러오기
+$imgRes = $conn->query("SELECT * FROM BooksImages WHERE book_id=$book_id");
+$images = [];
+while ($row = $imgRes->fetch_assoc()) $images[] = $row;
+
+?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>교재 등록 | RAON</title>
+    <title>교재 수정 | RAON</title>
     <link rel="stylesheet" href="style.css">
-    <style>
+<style>
         .post-box { max-width:540px; margin:40px auto; background:#fff; border-radius:15px; box-shadow:0 1px 8px rgba(0,0,0,0.08); padding:34px 35px 34px 35px;}
         .post-title {font-size:1.29em;font-weight:bold;margin-bottom:25px;letter-spacing:2px;}
         .post-btn-row {display:flex;gap:12px;margin-bottom:23px;}
@@ -111,93 +130,95 @@
 </div>
 
 <div class="post-box">
-    <div class="post-title">교재 등록</div>
-    <form action="post_book.php" method="post" enctype="multipart/form-data" id="regForm" autocomplete="off">
+    <div class="post-title">교재 수정</div>
+    <form action="update_book.php" method="post" enctype="multipart/form-data" id="editForm" autocomplete="off">
+        <input type="hidden" name="book_id" value="<?=$book_id?>">
+        <!-- 카테고리 -->
         <div class="post-btn-row">
-            <button type="button" id="btnMajor" class="post-type-btn">전공</button>
-            <button type="button" id="btnLiberal" class="post-type-btn">교양</button>
+            <button type="button" id="btnMajor" class="post-type-btn <?=$book['category']=='전공'?'active':''?>">전공</button>
+            <button type="button" id="btnLiberal" class="post-type-btn <?=$book['category']=='교양'?'active':''?>">교양</button>
         </div>
-        <input type="hidden" name="category" id="categoryInput">
-        <div id="major-filter" class="post-filter" style="display:none;">
+        <input type="hidden" name="category" id="categoryInput" value="<?=htmlspecialchars($book['category'])?>">
+        <!-- 전공 선택시 -->
+        <div id="major-filter" class="post-filter" style="<?=($book['category']=='전공')?'':'display:none;'?>">
             <select id="gradeSelect" name="grade" class="filter-sel" style="width:90px;">
                 <option value="">학년</option>
-                <option value="1">1학년</option>
-                <option value="2">2학년</option>
-                <option value="3">3학년</option>
-                <option value="4">4학년</option>
-                <option value="5">5학년</option>
+                <?php for($i=1;$i<=5;$i++): ?>
+                    <option value="<?=$i?>" <?=$book['grade']==$i?'selected':''?>><?=$i?>학년</option>
+                <?php endfor; ?>
             </select>
-            <div id="majorSelectBtn" class="filter-sel" style="width:200px;position:relative;user-select:none;cursor:pointer;">학과</div>
-            <input type="hidden" id="selectedMajor" name="major">
-            <div id="majorDropdown">
+            <div id="majorSelectBtn" class="filter-sel" style="width:200px;position:relative;user-select:none;cursor:pointer;"><?=$book['major'] ? htmlspecialchars($book['major']) : '학과'?></div>
+            <input type="hidden" id="selectedMajor" name="major" value="<?=htmlspecialchars($book['major'])?>">
+            <div id="majorDropdown" style="display:none;">
                 <div style="display:flex;">
                   <div id="collegeList"></div>
                   <div id="deptList"></div>
                 </div>
             </div>
         </div>
-        <div id="liberal-filter" class="post-filter" style="display:none;">
+        <!-- 교양 선택시 -->
+        <div id="liberal-filter" class="post-filter" style="<?=($book['category']=='교양')?'':'display:none;'?>">
             <select id="liberalType" name="subject" class="filter-sel">
                 <option value="">교양 종류</option>
-                <option value="호심교양">호심교양</option>
-                <option value="균형교양">균형교양</option>
+                <option value="호심교양" <?=$book['subject']=='호심교양'?'selected':''?>>호심교양</option>
+                <option value="균형교양" <?=$book['subject']=='균형교양'?'selected':''?>>균형교양</option>
             </select>
         </div>
-        <div class="input-row">
-            <label>책 제목</label>
-            <input type="text" name="title" required>
+        <!-- 이하 나머지 필드, 기존 value 값 넣어서 -->
+        <div class="input-row"><label>책 제목</label>
+            <input type="text" name="title" value="<?=htmlspecialchars($book['title'])?>" required>
         </div>
-        <div class="input-row">
-            <label>저자</label>
-            <input type="text" name="author" required>
+        <div class="input-row"><label>저자</label>
+            <input type="text" name="author" value="<?=htmlspecialchars($book['author'])?>" required>
         </div>
-        <div class="input-row">
-            <label>출판사</label>
-            <input type="text" name="publisher" required>
+        <div class="input-row"><label>출판사</label>
+            <input type="text" name="publisher" value="<?=htmlspecialchars($book['publisher'])?>" required>
         </div>
-        <div class="input-row">
-            <label>출판일</label>
-            <input type="date" name="publish_date">
+        <div class="input-row"><label>출판일</label>
+            <input type="date" name="publish_date" value="<?=$book['publish_date']?>">
         </div>
-        <div class="input-row">
-            <label>원가(정가)</label>
-            <input type="number" name="original_price" min="0">
+        <div class="input-row"><label>원가(정가)</label>
+            <input type="number" name="original_price" min="0" value="<?=$book['original_price']?>">
         </div>
-        <div class="input-row">
-          <label>판매 가격</label>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <input type="number" name="selling_price" id="sellingPriceInput" min="0" required style="flex:1;">
-            <button type="button" id="priceSuggestBtn" class="pretty-file-btn" style="height:36px;padding:0 16px;font-size:1em;">판매가 추천받기</button>
-            <span id="priceSuggestionResult" style="margin-left:10px;color:#c87d2e;font-size:0.98em;font-weight:bold;"></span>
-          </div>
+        <div class="input-row"><label>판매 가격</label>
+            <input type="number" name="selling_price" min="0" value="<?=$book['selling_price']?>" required>
+        </div>
+        <div class="input-row"><label>상세 설명</label>
+            <textarea name="description"><?=htmlspecialchars($book['description'])?></textarea>
         </div>
 
+        <!-- 새 파일 첨부 -->
+        <!-- 기존 이미지 표시 -->
         <div class="input-row">
-            <label>상세 설명</label>
-            <textarea name="description"></textarea>
+            <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
+            <div id="existingFilesList"></div>
         </div>
-        <!-- 여기만 달라짐! -->
+        <!-- 새 파일 첨부 -->
         <div class="input-row">
-          <label>책 사진 (최대 5장, 첫 번째가 대표사진)</label>
-          <div class="custom-file-wrap">
-            <div class="custom-file" style="margin-top:5px; gap: 10px">
-            <button type="button" id="customFileBtn" class="pretty-file-btn">파일 선택</button>
-            <span id="selectedFilesText" class="file-info">선택된 파일 없음</span>
-            <input type="file" id="bookImages" name="images[]" accept="image/*" multiple style="display:none;">
-          </div>
-          <div id="selectedFilesList"></div>
+            <div class="custom-file-wrap">
+                <button type="button" id="customFileBtn" class="pretty-file-btn">파일 선택</button>
+                <span id="selectedFilesText" class="file-info">선택된 파일 없음</span>
+                <input type="file" id="bookImages" name="images[]" accept="image/*" multiple style="display:none;">
+            </div>
+            <div id="selectedFilesList"></div>
         </div>
+
         <div class="input-row" style="margin-top:10px;">
-          <button type="submit" class="submit-btn">등록하기</button>
+            <button type="submit" class="submit-btn">수정 완료</button>
         </div>
     </form>
 </div>
-
 <script>
 window.onload = function() {
     const name = sessionStorage.getItem('name');
     if(name) document.getElementById('username').textContent = name + '님';
 };
+let deleteImgs = [];
+function removeExistImg(path) {
+    deleteImgs.push(path);
+    document.getElementById('delete_exist').value = deleteImgs.join(',');
+    event.target.parentElement.style.display = 'none';
+}
 
 // 전공/교양 토글 동작
 const btnMajor = document.getElementById('btnMajor');
@@ -341,113 +362,124 @@ if (majorSelectBtn && majorDropdown) {
   });
 }
 
-//////////////////////////////
-// 파일 업로드 UI & 파일명 표시
-//////////////////////////////
-let fileList = [];
+// 기존 사진 목록을 자바스크립트로 넘겨서, post_book.html과 동일하게 동작하도록 구성
+const existingImages = <?=json_encode(array_map(function($img) {
+    return [
+        'path' => $img['image_path'],
+        'file' => basename($img['image_path']),
+        'size' => @filesize($img['image_path']) ? round(filesize($img['image_path'])/1024,1) : '-'
+    ];
+}, $images))?>;
+
+let fileList = [...existingImages];
+const deletedExistingImages = new Set();
+
+function showFiles() {
+    const existingFilesList = document.getElementById('existingFilesList');
+    existingFilesList.innerHTML = '';
+    if (fileList.length === 0) {
+        existingFilesList.textContent = "사진이 없습니다.";
+        return;
+    }
+    fileList.forEach((f, i) => {
+        if (!f) return;
+        let isExisting = !!f.path; // 기존 이미지면 path 있음
+        let fileLabel = `${i===0 ? '<b>[대표]</b> ' : ''}${f.file} (${f.size}KB)`;
+        let delBtn = `<button type="button" onclick="removeFile(${i})">삭제</button>`;
+        existingFilesList.innerHTML += `${fileLabel} ${delBtn}<br>`;
+    });
+}
+
+window.removeFile = function(idx) {
+    // 기존파일은 삭제 set에 추가
+    if(fileList[idx] && fileList[idx].path) {
+        deletedExistingImages.add(fileList[idx].path);
+    }
+    fileList.splice(idx, 1);
+    showFiles();
+}
+
+showFiles();
+
+// 새 파일 첨부 UI: post_book.html과 동일
 const bookImages = document.getElementById('bookImages');
 const customFileBtn = document.getElementById('customFileBtn');
 const selectedFilesText = document.getElementById('selectedFilesText');
 const selectedFilesList = document.getElementById('selectedFilesList');
 
-// 파일 선택 버튼 클릭시 실제 input 클릭
+let newFileList = [];
+
 customFileBtn.onclick = () => bookImages.click();
 
-// 파일 선택/추가시
 bookImages.onchange = function(e) {
-  const newFiles = Array.from(bookImages.files);
-  // 중복 추가 방지 (name, size, lastModified로 판별)
-  for (let f of newFiles) {
-    // 최대 5장 제한
-    if (fileList.length >= 5) break;
-    if (!fileList.some(x => x.name === f.name && x.size === f.size && x.lastModified === f.lastModified)) {
-      fileList.push(f);
+    const newFiles = Array.from(bookImages.files);
+    for (let f of newFiles) {
+        if (fileList.length + newFileList.length >= 5) break;
+        if (!newFileList.some(x => x.name === f.name && x.size === f.size && x.lastModified === f.lastModified)) {
+            newFileList.push(f);
+        }
     }
-  }
-  if (fileList.length > 5) fileList = fileList.slice(0, 5);
+    if (fileList.length + newFileList.length > 5) newFileList = newFileList.slice(0, 5 - fileList.length);
 
-  // 파일 input value를 초기화해서 다시 선택 가능하게 함
-  bookImages.value = "";
+    bookImages.value = "";
+    showNewFiles();
+};
 
-  showFiles();
-}
-
-// 파일 리스트 렌더링
-function showFiles() {
-  selectedFilesList.innerHTML = '';
-  if (fileList.length === 0) {
-    selectedFilesText.textContent = "선택된 파일 없음";
-    return;
-  }
-  let names = fileList.map(f => f.name);
-  selectedFilesText.textContent = names.join(', ');
-
-  fileList.forEach((f, i) => {
-    const div = document.createElement('div');
-    div.style.marginBottom = '7px';
-    div.innerHTML =
-      `<b>${i === 0 ? '[대표]' : ''}</b> ${f.name} (${(f.size / 1024).toFixed(1)}KB)
-       <button type="button" onclick="removeFile(${i})" style="margin-left:8px;">삭제</button>`;
-    selectedFilesList.appendChild(div);
-  });
-}
-window.removeFile = function(idx) {
-  fileList.splice(idx, 1);
-  showFiles();
-}
-
-// 폼 제출 시 커스텀 fileList를 input.files에 반영
-document.getElementById('regForm').onsubmit = function(e){
-  if (fileList.length === 0) {
-    alert('사진을 1장 이상 선택하세요.');
-    e.preventDefault();
-    return false;
-  }
-  if (fileList.length > 5) {
-    alert('사진은 최대 5장까지 업로드 가능합니다.');
-    e.preventDefault();
-    return false;
-  }
-  // DataTransfer로 input에 반영
-  const dt = new DataTransfer();
-  fileList.forEach(f => dt.items.add(f));
-  bookImages.files = dt.files;
-  // 폼 동기 제출(이 부분에 e.preventDefault() 쓰지 말 것!)
-  // 그냥 끝내면 제출됨
-}
-// ======================= 판매가 추천 기능 ========================
-const priceBtn = document.getElementById('priceSuggestBtn');
-if(priceBtn){
-  priceBtn.onclick = function() {
-    const title = document.querySelector('input[name="title"]').value.trim();
-    const author = document.querySelector('input[name="author"]').value.trim();
-    const resultSpan = document.getElementById('priceSuggestionResult');
-    resultSpan.textContent = "조회중...";
-
-    if(!title || !author) {
-      resultSpan.textContent = "책 제목과 저자를 입력하세요.";
-      return;
+function showNewFiles() {
+    selectedFilesList.innerHTML = '';
+    if (newFileList.length === 0) {
+        selectedFilesText.textContent = "선택된 파일 없음";
+        return;
     }
-
-    // AJAX 요청
-    fetch('get_price_suggestion.php', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: 'title=' + encodeURIComponent(title) + '&author=' + encodeURIComponent(author)
-    })
-    .then(r=>r.json())
-    .then(data => {
-      if(data && data.avg_price){
-        resultSpan.textContent = `(평균가: ${data.avg_price.toLocaleString()}원)`;
-      } else {
-        resultSpan.textContent = "(등록되어 있는 동일한 책이 없습니다)";
-      }
-    }).catch(()=>{
-      resultSpan.textContent = "오류 발생";
+    let names = newFileList.map(f => f.name);
+    selectedFilesText.textContent = names.join(', ');
+    newFileList.forEach((f, i) => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '7px';
+        div.innerHTML =
+            `<b>${fileList.length + i === 0 ? '[대표]' : ''}</b> ${f.name} (${(f.size / 1024).toFixed(1)}KB)
+             <button type="button" onclick="removeNewFile(${i})" style="margin-left:8px;">삭제</button>`;
+        selectedFilesList.appendChild(div);
     });
-  };
+}
+window.removeNewFile = function(idx) {
+    newFileList.splice(idx, 1);
+    showNewFiles();
 }
 
+// 폼 제출 시 삭제/추가/대표순서 반영
+document.getElementById('editForm').onsubmit = function(e){
+    // 기존 파일 삭제 hidden input 생성
+    deletedExistingImages.forEach(path => {
+        let input = document.createElement('input');
+        input.type = "hidden";
+        input.name = "delete_exist[]";
+        input.value = path;
+        this.appendChild(input);
+    });
+
+    // 새 첨부파일(5장 제한)
+    if (fileList.length + newFileList.length === 0) {
+        alert('사진을 1장 이상 선택하세요.');
+        e.preventDefault();
+        return false;
+    }
+    if (fileList.length + newFileList.length > 5) {
+        alert('사진은 최대 5장까지 업로드 가능합니다.');
+        e.preventDefault();
+        return false;
+    }
+
+    // 새 파일이 있으면, 대표는 맨 앞 파일(기존+새파일)
+    if (newFileList.length > 0) {
+        const dt = new DataTransfer();
+        newFileList.forEach(f => dt.items.add(f));
+        bookImages.files = dt.files;
+    }
+    // 대표 이미지는 무조건 첫번째! (서버에서 배열 맨 앞이 대표로 저장되도록)
+
+    // 폼 동기 제출
+};
 
 </script>
 </body>

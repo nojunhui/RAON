@@ -32,14 +32,14 @@ if ($result && $row = $result->fetch_assoc()) {
             $conn->query("DELETE FROM Purchases WHERE book_id IN ($id_list)");
             $conn->query("DELETE FROM ChatMessages WHERE chatroom_id IN (SELECT chatroom_id FROM ChatRooms WHERE book_id IN ($id_list))");
             $conn->query("DELETE FROM ChatRooms WHERE book_id IN ($id_list)");
-            $conn->query("DELETE FROM Reviews WHERE book_id IN ($id_list)"); // ★ 책에 달린 리뷰 삭제
+            $conn->query("DELETE FROM Reviews WHERE book_id IN ($id_list)"); // 책에 달린 리뷰
         }
-        // 내가 남긴 관심/구매/채팅/리뷰
+        // 내가 남긴 관심/구매/채팅/내가 쓴(받은) 리뷰
         $conn->query("DELETE FROM Interests WHERE student_id='$student_id'");
         $conn->query("DELETE FROM Purchases WHERE buyer_id='$student_id'");
         $conn->query("DELETE FROM ChatMessages WHERE sender_id='$student_id'");
         $conn->query("DELETE FROM ChatRooms WHERE seller_id='$student_id' OR buyer_id='$student_id'");
-        $conn->query("DELETE FROM Reviews WHERE student_id='$student_id'"); // ★ 내가 쓴 리뷰 삭제
+        $conn->query("DELETE FROM Reviews WHERE seller_id='$student_id' OR buyer_id='$student_id'"); // 여기만 수정!
         $conn->query("DELETE FROM Books WHERE seller_id='$student_id'");
         $conn->query("DELETE FROM Users WHERE student_id='$student_id'");
         session_destroy();

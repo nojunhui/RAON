@@ -55,7 +55,9 @@ while($row = $res->fetch_assoc()) $chatrooms[] = $row;
     .mypage-menu .menu-box { border: 1.5px solid #e7c195; border-radius: 11px; padding: 24px 20px;}
     .mypage-menu .menu-box ul { list-style:none; padding:0; margin:0;}
     .mypage-menu .menu-box li { margin-bottom:18px;}
+    .mypage-menu .menu-box ul li:last-child { margin-bottom: 0; }
     .mypage-menu .menu-box a, .mypage-menu .menu-box b { color:#664317; text-decoration:none; font-size:1.07em;}
+
     .chat-list-main { margin-left: 240px;}
     .chat-toggle-row { margin-bottom:16px;}
     .chat-toggle-btn {
@@ -75,44 +77,23 @@ while($row = $res->fetch_assoc()) $chatrooms[] = $row;
     .chat-empty { color:#b1a78e; text-align:center; margin:80px 0 60px 0; font-size:1.05em;}
     .chatroom-row:hover { background:#fff3e0; }
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.search-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: 1.5px solid #a5753f;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1em;
-  padding: 10px 18px;
-  background: #fff;
-  height: 42px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.search-btn {
-  background: #ffcd99;
+    .badge-unread {
+  display: inline-block;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 6px;
+  background: #ff3c3c;
   color: #fff;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1.1em;
   font-weight: bold;
-  padding: 0 28px;
-  height: 42px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  margin-left: 0;
-  outline: none;
-  transition: background 0.15s;
+  font-size: 0.97em;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 21px;
+  margin-left: 7px;
+  box-shadow: 0 1px 4px #e38a8a38;
 }
+
   </style>
 </head>
 <body>
@@ -135,32 +116,90 @@ while($row = $res->fetch_assoc()) $chatrooms[] = $row;
       <button class="chat-toggle-btn<?= $mode=='buy'?' active':'' ?>" onclick="location.href='my_chat.php?mode=buy'">구매</button>
       <button class="chat-toggle-btn<?= $mode=='sell'?' active':'' ?>" onclick="location.href='my_chat.php?mode=sell'">판매</button>
     </div>
-    <div class="chat-list">
-      <?php if(empty($chatrooms)): ?>
-        <div class="chat-empty">채팅 내역이 없습니다.</div>
-      <?php else: foreach($chatrooms as $r): ?>
-        <div class="chatroom-row" ondblclick="location.href='chat_room.php?chatroom_id=<?= $r['chatroom_id'] ?>'">
-          <img class="chat-thumb" src="<?= htmlspecialchars($r['image_path']?:'noimage.png') ?>">
-          <div class="chat-info">
-            <div class="chat-other-name"><?= htmlspecialchars($r['other_name']) ?></div>
-            <div class="chat-book-title">[<?= htmlspecialchars($r['title']) ?>]</div>
-            <div class="chat-last-msg"><?= htmlspecialchars($r['last_msg']) ?></div>
-          </div>
-          <div class="chat-last-time">
-            <?= $r['last_time'] ? date('Y.m.d H:i', strtotime($r['last_time'])) : '' ?>
-          </div>
-        </div>
-      <?php endforeach; endif; ?>
+<div class="chat-list">
+  <?php foreach($chatrooms as $r): ?>
+    <div class="chatroom-row" 
+      data-chatroom-id="<?= $r['chatroom_id'] ?>"
+      ondblclick="location.href='chat_room.php?chatroom_id=<?= $r['chatroom_id'] ?>'">
+      <img class="chat-thumb" src="<?= htmlspecialchars($r['image_path']?:'noimage.png') ?>">
+      <div class="chat-info">
+        <div class="chat-other-name"><?= htmlspecialchars($r['other_name']) ?></div>
+        <div class="chat-book-title">[<?= htmlspecialchars($r['title']) ?>]</div>
+        <div class="chat-last-msg"><?= htmlspecialchars($r['last_msg']) ?></div>
+      </div>
+      <div class="chat-last-time">
+        <?= $r['last_time'] ? date('Y.m.d H:i', strtotime($r['last_time'])) : '' ?>
+        <span class="badge-unread" id="unread-<?= $r['chatroom_id'] ?>" style="display:none;">0</span>
+      </div>
     </div>
+  <?php endforeach; ?>
+</div>
+
   </div>
   <div style="clear:both"></div>
 </div>
 <footer style="text-align:center; margin-top:32px; color:#C1A06C;">© RAON</footer>
 <script>
-  // 클릭 or 더블클릭 모두 이동 지원하려면 아래 활성화
-  document.querySelectorAll('.chatroom-row').forEach(function(row){
-    row.onclick = function(){ location.href = row.getAttribute('ondblclick').replace("location.href=","").replace(/'/g,""); }
+// =============== 실시간 안 읽은 뱃지 및 메시지 갱신 ===============
+function updateUnreadBadges() {
+  fetch('unread_count.php')
+    .then(res => res.json())
+    .then(data => {
+      for (const chatroom_id in data) {
+        const count = data[chatroom_id];
+        const badge = document.getElementById('unread-' + chatroom_id);
+        if (badge) {
+          badge.textContent = count;
+          badge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+      }
+    });
+}
+
+function updateLastMessages() {
+  fetch('recent_message_list.php')
+    .then(res => res.json())
+    .then(data => {
+      for (const chatroom_id in data) {
+        // 최근 메시지
+        const msgDiv = document.querySelector('.chatroom-row[data-chatroom-id="'+chatroom_id+'"] .chat-last-msg');
+        if (msgDiv) msgDiv.textContent = data[chatroom_id].last_msg || '';
+        // 최근 시간
+        const timeDiv = document.querySelector('.chatroom-row[data-chatroom-id="'+chatroom_id+'"] .chat-last-time');
+        if (timeDiv) {
+          let badge = timeDiv.querySelector('.badge-unread');
+          let newHtml = data[chatroom_id].last_time || '';
+          if (badge) newHtml += badge.outerHTML;
+          timeDiv.innerHTML = newHtml;
+        }
+      }
+    });
+}
+
+// 최초 한 번, 그리고 3초마다 반복
+updateUnreadBadges();
+setInterval(updateUnreadBadges, 3000);
+
+updateLastMessages();
+setInterval(updateLastMessages, 3000);
+
+// =============== 채팅방 클릭(입장) 시 읽음 처리 ===============
+document.querySelectorAll('.chatroom-row').forEach(function(row){
+  row.addEventListener('click', function(){
+    const chatroom_id = row.getAttribute('data-chatroom-id');
+    fetch('read_chatroom.php?chatroom_id='+chatroom_id)
+      .then(() => {
+        const badge = document.getElementById('unread-' + chatroom_id);
+        if (badge) badge.style.display = 'none';
+      });
+    location.href = "chat_room.php?chatroom_id=" + chatroom_id;
   });
+  row.addEventListener('dblclick', function(e){
+    e.preventDefault();
+  });
+});
 </script>
+
+
 </body>
 </html>

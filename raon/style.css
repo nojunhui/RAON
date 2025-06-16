@@ -54,28 +54,6 @@ body {
   font-family: 'RIDIBatang', 'Malgun Gothic', Arial, sans-serif;
 }
 
-.topnav {
-  display: flex;
-  align-items: center;
-  background: #FFECC2;
-  padding: 16px 24px 8px 24px;
-}
-
-.logo {
-  font-weight: bold;
-  font-size: 2.2em;
-  color: #222;
-  margin-right: 36px;
-  letter-spacing: 2px;
-  cursor: pointer;
-}
-
-.category-bar {
-  margin-right: 14px;
-  display: flex;
-  gap: 6px;
-}
-
 .category-btn {
   width: 90px; height: 30px;
   background: #fff;
@@ -98,19 +76,34 @@ body {
 
 /* 2단 학과 드롭다운 */
 #majorDropdown {
-  min-width: 350px; top:36px;
+  min-width: 420px;   /* 기존보다 크게 (예: 350→420px) */
+  max-width: 540px;   /* 예: 240→540px */
+  top: 36px;
   border: 1px solid #ffd7b3;
   box-shadow: 0 2px 7px rgba(0,0,0,0.14);
   background: #fff;
   border-radius: 7px;
-  padding: 10px 0;
+  padding: 12px 0;    /* 좀 더 여유 */
+  z-index: 10000;
+  display: flex;      /* ← flex로 정렬, 좌/우로 나눔 */
 }
+
 #collegeList {
-  min-width:120px; border-right:1px solid #f0c6a7; padding:0 8px;
+  min-width: 160px;   /* 90→160px */
+  max-width: 210px;   /* 추가 */
+  border-right: 1px solid #f0c6a7;
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* 왼쪽 정렬로 변경(필요시) */
 }
+
 #deptList {
-  min-width:180px; padding:0 8px;
+  min-width: 220px;   /* 180→220px */
+  max-width: 330px;   /* 추가 */
+  padding: 0 16px;
 }
+
 .college-item, .dept-item {
   padding: 6px 11px;
   font-size: 1.01em;
@@ -140,12 +133,23 @@ body {
 }
 
 #majorSelectBtn {
-  width: 90px !important;
-  display: flex;           /* Flex로 감싸주면 더 중앙 */
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  min-width: 120px;
+  max-width: 170px;
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 10px;
+  box-sizing: border-box;
+  height: 28px;           /* 높이 고정 */
+  line-height: 28px;      /* 높이와 동일하게 맞추기 */
+  font-size: 1.05em;      /* 기존 폰트 크기 유지 */
 }
+
+
 
 /* 드롭다운의 "전체" 항목도 중앙 정렬 */
 .college-item:first-child {
@@ -161,45 +165,77 @@ body {
 .search-bar {
   display: flex;
   align-items: center;
-  width: 100%;
-  max-width: 100%;
+  width: 320px;
+  max-width: 400px;
   box-sizing: border-box;
 }
 
 .search-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: 1.5px solid #a5753f;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1em;
-  padding: 10px 18px;
-  background: #fff;
-  height: 42px;
-  box-sizing: border-box;
-  outline: none;
-}
+      flex: 1 1 0;
+      min-width: 310px;
+      max-width: 390px;
+      border: 1.5px solid #a5753f;
+      border-radius: 12px;
+      font-size: 1em;
+      padding: 10px 16px;
+      background: #fff;
+      height: 38px;
+      box-sizing: border-box;
+      outline: none;
+    }
 
 .search-btn {
-  background: #ffcd99;
-  color: #fff;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1.1em;
-  font-weight: bold;
-  padding: 0 28px;
-  height: 42px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  margin-left: 0;
-  outline: none;
-  transition: background 0.15s;
+      background: #ffcd99;
+      color: #fff;
+      border-radius: 12px;
+      font-size: 1.08em;
+      font-weight: bold;
+      padding: 0 28px;
+      height: 38px;
+      border: none;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      margin-left: 16px;
+      outline: none;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+.auth-btns {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 18px;
+      flex-shrink: 0;
+      font-size : 15px;
 }
-
-.auth-btns { display: flex; gap: 7px;}
-.auth-btns button { width:110px; height:40px; border-radius: 9px; background: #fff; border: 1px solid #ffc093; color:#c87d2e; font-weight: bold; font-size:1.05em; cursor:pointer;}
-.username { font-weight: bold; color: #222; margin-right: 13px; font-size:1.04em;}
+.auth-btns button {
+      background: #fff;
+      border: 1.3px solid #ffd7b3;
+      color: #ad854c;
+      border-radius: 8px;
+      font-size: 1.01em;
+      font-weight: bold;
+      padding: 7px 15px;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    
+.username {
+      font-weight: bold;
+      color: #222;
+      margin-right: 8px;
+      font-size: 1.04em;
+      padding-top: 7px;
+      display: inline-block;
+    }
+    
+.auth-btns button:hover {
+  background: #FFE4CC;
+  color: #c87d2e;
+}
 
 .main-content {
   max-width: 1500px;
@@ -209,7 +245,18 @@ body {
 .new-books-title {font-size: 1.19em; font-weight:bold; margin-bottom:50px;}
 .book-list-row { display: flex; gap: 18px;}
 .book-card { background: #fff; border-radius:10px; box-shadow:0 1px 6px rgba(0,0,0,0.06); width:300px; padding:10px 8px;}
-.book-thumb { width:100%; height:110px; object-fit:cover; border-radius:7px;}
+.book-thumb {
+  width: 100%;         /* 카드 박스 가로 100% */
+  max-width: 230px;    /* 이미지의 최대 가로 크기 (원하는 만큼 조정) */
+  height: 300px;       /* 기존 110px → 180px 등으로 늘리기 */
+  max-height: 300px;   /* 이미지의 최대 세로 크기 (원하는 만큼 조정) */
+  object-fit: cover;   /* (or contain, 아래 참고) */
+  border-radius: 7px;
+  background: #f6e7d0;
+  border: 1.2px solid #efd6ab;
+  display: block;
+  margin: 0 auto;      /* 가로 가운데 정렬 */
+}
 .book-title { font-weight: bold; font-size: 1em; margin:7px 0; display:flex; align-items:center; gap:10px;}
 .book-meta { color:#555; font-size:0.97em; margin-bottom:6px;}
 .book-price {
@@ -471,43 +518,44 @@ button, input, select, textarea {
 .topnav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background: #FFECC2;
-  padding: 16px 24px 8px 24px;
-  position: relative;
+  padding: 12px 24px 7px 24px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
-
 .logo {
-  font-weight: bold;
   font-size: 2.2em;
-  color: #222;
-  margin-right: 36px;
+  font-weight: bold;
+  color: #a5753f;
+  margin-right: 18px;
   letter-spacing: 2px;
   cursor: pointer;
   flex-shrink: 0;
 }
-
 /* 중앙 content (카테고리 + 검색창 + 버튼들) */
 .topnav-center-wrap {
   display: flex;
   align-items: center;
-  margin: 0 auto;
-  flex: 1;
+  flex: 1 1 0%;
   min-width: 0;
-  justify-content: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .category-bar {
   display: flex;
   gap: 6px;
+  margin-right: 14px;
   flex-shrink: 0;
 }
 .search-bar {
-  display: flex; 
-  align-items: center; 
-  flex-shrink: 0;
-  margin-right: 0;
-  margin-left: 0;
+  flex: 1 1 0;
+  max-width: 620px;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
 }
 
 .auth-btns {
@@ -527,15 +575,10 @@ button, input, select, textarea {
   display: inline-block;
 }
 
-@media (max-width: 1200px) {
-  .search-input { width: 300px; }
-  .topnav-center-wrap { flex-wrap: wrap; }
-}
-
 
 .lion-group {
   position: absolute;
-  top: 65px;
+  top: 50px;
   left: 1400px;
   z-index: 10;
   display: flex;

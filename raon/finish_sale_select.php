@@ -51,9 +51,12 @@ while ($row = $res->fetch_assoc()) $buyers[] = $row;
   </style>
 </head>
 <body>
+  <div class="topnav">
+    <div class="logo" onclick="location.href='index.php'">RAON</div>
+  </div>
   <div class="sale-select-box">
     <h3 style="margin-top:0;">판매완료로 처리할 구매자를 선택하세요</h3>
-    <form method="post" action="finish_sale.php" onsubmit="return confirm('이 구매자로 판매완료 처리할까요?');">
+    <form method="post" action="finish_sale.php" onsubmit="return checkBuyerSelected();">
       <input type="hidden" name="book_id" value="<?= $book_id ?>">
       <?php if($buyers): foreach($buyers as $b): ?>
         <div class="buyer-row">
@@ -75,6 +78,17 @@ while ($row = $res->fetch_assoc()) $buyers[] = $row;
       <?php endif; ?>
       <button type="submit" class="submit-btn">확인</button>
     </form>
+    <script>
+function checkBuyerSelected() {
+    // radio가 한 개 이상 있고, 체크된 게 있는지 검사
+    const checked = document.querySelector('input[name="buyer_id"]:checked');
+    if (!checked) {
+        alert('구매자를 선택하세요.');
+        return false;
+    }
+    return confirm('이 구매자로 판매완료 처리할까요?');
+}
+</script>
   </div>
 </body>
 </html>

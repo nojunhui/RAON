@@ -9,117 +9,7 @@ $name = $isLogin ? $_SESSION['name'] : null;
   <meta charset="UTF-8">
   <title>RAON</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* 헤더 레이아웃 핵심 수정 */
-    .topnav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #FFECC2;
-      padding: 12px 24px 7px 24px;
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-    .logo {
-      font-size: 2.2em;
-      font-weight: bold;
-      color: #a5753f;
-      margin-right: 18px;
-      letter-spacing: 2px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .topnav-center-wrap {
-      display: flex;
-      align-items: center;
-      flex: 1 1 0%;
-      min-width: 0;
-      gap: 14px;
-    }
-    .category-bar {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-    .search-bar {
-      flex: 1 1 0;
-      max-width: 420px;
-      min-width: 120px;
-      display: flex;
-      align-items: center;
-      margin-left: 16px;
-    }
-    .search-input {
-      flex: 1 1 0;
-      min-width: 0;
-      max-width: 240px;
-      border: 1.5px solid #a5753f;
-      border-radius: 12px;
-      font-size: 1em;
-      padding: 10px 16px;
-      background: #fff;
-      height: 38px;
-      box-sizing: border-box;
-      outline: none;
-    }
-    .search-btn {
-      background: #ffcd99;
-      color: #fff;
-      border-radius: 12px;
-      font-size: 1.08em;
-      font-weight: bold;
-      padding: 0 231px;
-      height: 38px;
-      border: none;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      margin-left: 7px;
-      outline: none;
-      transition: background 0.15s;
-      cursor: pointer;
-    }
-    .auth-btns {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 18px;
-      flex-shrink: 0;
-      font-size : 15px;
-    }
-    .auth-btns button {
-      background: #fff;
-      border: 1.3px solid #ffd7b3;
-      color: #ad854c;
-      border-radius: 8px;
-      font-size: 1.01em;
-      font-weight: bold;
-      padding: 7px 15px;
-      cursor: pointer;
-      transition: background 0.12s, color 0.12s;
-    }
-    .auth-btns button:hover {
-      background: #FFE4CC;
-      color: #c87d2e;
-    }
-    .username {
-      font-weight: bold;
-      color: #222;
-      margin-right: 8px;
-      font-size: 1.04em;
-      padding-top: 7px;
-      display: inline-block;
-    }
-    /* 반응형 */
-    @media (max-width: 950px) {
-      .topnav { flex-wrap: wrap; padding: 7px 2vw; }
-      .topnav-center-wrap { flex-basis: 100%; justify-content: center; margin: 7px 0; }
-      .auth-btns { margin-left: 0; }
-    }
-  </style>
+
 </head>
 <body>
 <div class="topnav">
@@ -142,9 +32,10 @@ $name = $isLogin ? $_SESSION['name'] : null;
           <option value="5">5학년</option>
         </select>
         <input type="hidden" id="searchGrade" name="grade">
-        <div id="majorSelectBtn" class="filter-sel" style="width:120px;position:relative;user-select:none;cursor:pointer;">전체</div>
+        <div id="majorSelectBtn" class="filter-sel">전체</div>
+
         <input type="hidden" id="selectedMajor" name="major">
-        <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:240px;top:36px;">
+        <div id="majorDropdown" style="display:none;position:absolute;z-index:999;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,0.14);border-radius:7px;padding:10px 0;min-width:330px;top:36px;">
           <div style="display:flex;">
             <div id="collegeList" style="min-width:90px;border-right:1px solid #f0c6a7;padding:0 8px;"></div>
             <div id="deptList" style="min-width:120px;padding:0 8px;"></div>
@@ -187,19 +78,7 @@ $name = $isLogin ? $_SESSION['name'] : null;
       if (!searchInput.value) searchInput.placeholder = oriPlaceholder;
     });
   }
-  // 공백 검색 방지 + 실제 값 제대로 전송
-  document.getElementById('searchForm').onsubmit = function(e) {
-    const val = searchInput.value.trim();
-    if (!val) {
-      alert('검색어를 입력해 주세요.');
-      searchInput.value = '';
-      searchInput.focus();
-      e.preventDefault();
-      return false;
-    }
-    searchInput.value = val; // 앞뒤 공백 잘라서 검색
-    return true;
-  }
+
 </script>
 <!-- script.js 연동 -->
 <script src="script.js"></script>

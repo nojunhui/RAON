@@ -64,45 +64,6 @@ while ($row = $res->fetch_assoc()) $books[] = $row;
       .post-item { flex-direction: column; align-items: flex-start; }
       .post-btn-area { margin-top:9px; }
     }
-.search-bar {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.search-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: 1.5px solid #a5753f;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1em;
-  padding: 10px 18px;
-  background: #fff;
-  height: 42px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.search-btn {
-  background: #ffcd99;
-  color: #fff;
-  border-radius: 12px 12px 12px 12px;
-  font-size: 1.1em;
-  font-weight: bold;
-  padding: 0 28px;
-  height: 42px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  margin-left: 0;
-  outline: none;
-  transition: background 0.15s;
-}
-    
   </style>
 </head>
 <body>
